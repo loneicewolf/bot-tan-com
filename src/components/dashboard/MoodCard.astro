@@ -1,0 +1,144 @@
+---
+import { STATUSES, type Dictionary } from '../../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+
+/**
+ * Emoji stand-ins for Bot-tan's five utility-AI states. The bot repo ships
+ * AI-generated icon PNGs for these; they are deliberately not used here.
+ */
+const statusEmoji: Record<(typeof STATUSES)[number], string> = {
+  Sleep: '😴',
+  WakeUp: '🌅',
+  Study: '📖',
+  FreeTime: '🦋',
+  Relax: '☕',
+};
+---
+
+<div class="mood">
+  <div class="mood__now">
+    <p class="mood__label">{t.dashboard.mood.heading}</p>
+    <p class="mood__value" id="mood-text">---</p>
+    <p class="mood__next">
+      {t.dashboard.mood.nextLabel}: <span id="next-step-time">---</span>
+    </p>
+  </div>
+
+  <div class="mood__states">
+    <p class="mood__label">{t.dashboard.mood.statusHeading}</p>
+    <ul class="states">
+      {
+        STATUSES.map((status) => (
+          <li class="state" id={`state-${status}`} data-status={status}>
+            <span class="state__emoji" aria-hidden="true">
+              {statusEmoji[status]}
+            </span>
+            <span class="state__name">{t.dashboard.mood.statusLabels[status]}</span>
+            <span class="state__score" id={`utility-${status}`}>
+              ---
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  .mood {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 720px) {
+    .mood {
+      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .mood__label {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-hand);
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+
+  .mood__value {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+    line-height: 1.5;
+    color: var(--color-sky-deep);
+  }
+
+  .mood__next {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .states {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(6.2rem, 1fr));
+  }
+
+  .state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.6rem 0.4rem;
+    border-radius: 0.5rem;
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 80%, transparent);
+    transition: background 250ms ease, border-color 250ms ease, scale 250ms ease;
+  }
+
+  /* The state Bot-tan is currently in gets the highlighter treatment. */
+  .state[data-active='true'] {
+    background: var(--color-marker);
+    border-color: var(--color-kotomi);
+    scale: 1.06;
+    animation: wobble-in 400ms ease;
+  }
+
+  .state__emoji {
+    font-family: var(--font-emoji);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    /* Greyed out until it becomes the active state. */
+    filter: grayscale(0.7);
+    opacity: 0.65;
+    transition: filter 250ms ease, opacity 250ms ease;
+  }
+
+  .state[data-active='true'] .state__emoji {
+    filter: none;
+    opacity: 1;
+  }
+
+  .state__name {
+    font-family: var(--font-hand);
+    font-size: 0.78rem;
+    text-align: center;
+    line-height: 1.35;
+  }
+
+  .state__score {
+    font-size: 0.72rem;
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

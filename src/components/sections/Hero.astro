@@ -1,0 +1,245 @@
+---
+import { Image } from 'astro:assets';
+import trio from '../../assets/characters/trio.png';
+import nagiIcon from '../../assets/brand/nagi-icon.png';
+import { useTranslations, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="hero" id="top">
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <p class="hero__eyebrow" data-reveal="left">{t.hero.subtitle}</p>
+
+      <blockquote class="hero__catch">
+        <span class="hero__quote" aria-hidden="true">&ldquo;</span>
+        {
+          t.hero.catch.map((line, i) => (
+            <span class="hero__line" data-reveal="up" style={`--reveal-delay:${180 + i * 190}ms`}>
+              {line}
+            </span>
+          ))
+        }
+      </blockquote>
+
+      <a
+        class="hero__cta"
+        href="https://nagi.suibari.com/profile/did:plc:qcwhrvzx6wmi5hz775uyi6fh"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-reveal="pop"
+        style="--reveal-delay:820ms"
+      >
+        <Image src={nagiIcon} alt="" width={40} height={40} class="hero__cta-icon" />
+        {t.hero.cta}
+      </a>
+    </div>
+
+    <div class="hero__art" data-reveal="right" style="--reveal-delay:260ms">
+      <div class="hero__frame">
+        <Image
+          src={trio}
+          alt={t.hero.imageAlt}
+          widths={[380, 620, 900]}
+          sizes="(max-width: 900px) 72vw, 30rem"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__scroll" aria-hidden="true">
+    <span>{t.hero.scrollHint}</span>
+    <svg viewBox="0 0 12 30" width="12" height="30" focusable="false">
+      <path
+        d="M6 1 C5 8 7 14 6 21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      />
+      <path
+        d="M2.5 17 C4 21 5.5 24 6 27 C6.6 24 8 21 9.5 17"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+</div>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: min(92dvh, 46rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2rem, 7vw, 4.5rem) 1rem 4rem;
+  }
+
+  .hero__inner {
+    width: 100%;
+    max-width: 68rem;
+    margin-inline: auto;
+    display: grid;
+    gap: clamp(1.5rem, 5vw, 3rem);
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1.05fr 0.95fr;
+    }
+  }
+
+  .hero__eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-hand);
+    color: var(--color-sky-deep);
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero__catch {
+    position: relative;
+    margin: 0 0 2rem;
+    padding-left: clamp(1rem, 3vw, 2rem);
+    border-left: 3px solid color-mix(in srgb, var(--color-sky) 70%, transparent);
+    font-family: var(--font-hand);
+    font-size: clamp(1.15rem, 3vw, 1.6rem);
+    line-height: 1.85;
+  }
+
+  .hero__quote {
+    position: absolute;
+    top: -2.2rem;
+    left: 0.2rem;
+    font-family: var(--font-hand);
+    font-size: 5rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--color-sky) 55%, transparent);
+    pointer-events: none;
+  }
+
+  .hero__line {
+    display: block;
+  }
+
+  /* The last line is the one aimed at the reader — give it the highlighter. */
+  .hero__line:last-child {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 62%,
+      color-mix(in srgb, var(--color-marker) 90%, transparent) 62%
+    );
+  }
+
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    font-family: var(--font-hand);
+    font-size: 1.05rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    border-radius: 22px 16px 24px 14px;
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-sky-deep) 55%, transparent);
+    transition: translate 160ms ease, box-shadow 160ms ease, rotate 160ms ease;
+  }
+
+  .hero__cta:hover,
+  .hero__cta:focus-visible {
+    translate: -2px -2px;
+    rotate: -1deg;
+    box-shadow: 5px 5px 0 color-mix(in srgb, var(--color-sky-deep) 70%, transparent);
+  }
+
+  .hero__cta :global(.hero__cta-icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: block;
+  }
+
+  .hero__art {
+    justify-self: center;
+    max-width: 26rem;
+    width: 100%;
+  }
+
+  /*
+   * The artwork has its own painted background, so rather than trying to knock
+   * it out, it is presented as a photo taped into the page — tilted, with a
+   * white border and a strip of tape at the corner.
+   */
+  .hero__art :global(img) {
+    width: 100%;
+    display: block;
+    border-radius: 0.35rem;
+    /*
+     * The source art is a tall 2:3 portrait, which would push the hero well
+     * past one screen. Crop it to a photo-print ratio, biased upward so all
+     * three faces stay in frame.
+     */
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 18%;
+  }
+
+  .hero__frame {
+    position: relative;
+    padding: 0.7rem 0.7rem 1.4rem;
+    background: #fffdf8;
+    border-radius: 0.5rem;
+    rotate: -1.6deg;
+    box-shadow: 0 18px 34px -20px rgb(61 55 51 / 0.55), 0 2px 0 rgb(61 55 51 / 0.06);
+    animation: bob 6.5s ease-in-out infinite;
+  }
+
+  /* Masking tape across the top-left corner. */
+  .hero__frame::before {
+    content: '';
+    position: absolute;
+    top: -0.9rem;
+    left: -1.4rem;
+    width: 7rem;
+    height: 1.9rem;
+    rotate: -32deg;
+    background: color-mix(in srgb, var(--color-marker) 80%, transparent);
+    box-shadow: 0 1px 3px rgb(61 55 51 / 0.14);
+    clip-path: polygon(
+      3% 10%, 20% 0%, 38% 11%, 56% 2%, 74% 12%, 90% 3%, 100% 10%,
+      97% 90%, 80% 100%, 62% 89%, 44% 98%, 26% 88%, 10% 97%, 0% 88%
+    );
+  }
+
+  .hero__scroll {
+    margin-top: clamp(2rem, 6vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-hand);
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+    /* Fades away as soon as the reader takes the hint. */
+    opacity: clamp(0, calc(1 - var(--scroll-progress) * 14), 1);
+  }
+
+  .hero__scroll svg {
+    animation: bob 1.8s ease-in-out infinite;
+  }
+</style>

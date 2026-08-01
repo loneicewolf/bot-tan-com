@@ -1,0 +1,110 @@
+---
+/**
+ * Pen doodles drifting behind the page — Bot-tan's two canonical motifs,
+ * butterflies (after Morpho) and clouds.
+ *
+ * Drawn as open outlines rather than filled glyphs on purpose: a solid
+ * butterfly silhouette reads as the Bluesky mark, which would imply branding
+ * this site does not carry. These read as sketches on the paper instead.
+ *
+ * Purely decorative: fixed position, no pointer events, hidden from assistive
+ * tech, and they only drift and parallax — nothing flaps.
+ */
+const doodles = [
+  { kind: 'butterfly', top: '14%', left: '6%', size: 44, hue: 'var(--color-morpho)', drift: 13, depth: 26 },
+  { kind: 'cloud', top: '28%', left: '87%', size: 52, hue: 'var(--color-sky)', drift: 17, depth: 40 },
+  { kind: 'butterfly', top: '57%', left: '10%', size: 36, hue: 'var(--color-sky-deep)', drift: 11, depth: 55 },
+  { kind: 'cloud', top: '69%', left: '80%', size: 62, hue: 'var(--color-sky)', drift: 19, depth: 18 },
+  { kind: 'butterfly', top: '86%', left: '43%', size: 32, hue: 'var(--color-morpho)', drift: 14, depth: 68 },
+] as const;
+
+/** Four wings, a body and antennae — unmistakably an illustrated butterfly. */
+const butterfly = `
+  <path d="M20 15c-2.6-6.2-7-9.6-11-8.6-3.6.9-4.8 5.4-3 8.7 1.7 3.1 5.6 4.3 9.2 3.4 1.7-.4 3.3-1.2 4.8-2.1Z"/>
+  <path d="M20 15c2.6-6.2 7-9.6 11-8.6 3.6.9 4.8 5.4 3 8.7-1.7 3.1-5.6 4.3-9.2 3.4-1.7-.4-3.3-1.2-4.8-2.1Z"/>
+  <path d="M19.4 19.6c-2.2 5-5.6 8.2-8.8 7.5-2.7-.6-3.7-3.9-2.4-6.4 1.2-2.3 4.2-3.3 7-2.7 1.5.3 2.9.9 4.2 1.6Z"/>
+  <path d="M20.6 19.6c2.2 5 5.6 8.2 8.8 7.5 2.7-.6 3.7-3.9 2.4-6.4-1.2-2.3-4.2-3.3-7-2.7-1.5.3-2.9.9-4.2 1.6Z"/>
+  <path d="M20 11.5c.9 2.6 1 8.9 0 15.5"/>
+  <path d="M19.2 11.2C17.6 8 15.4 6.2 13 5.6M20.8 11.2C22.4 8 24.6 6.2 27 5.6"/>
+`;
+
+/** A rounded cumulus outline, like the cloud pin in Bot-tan's hair. */
+const cloud = `
+  <path d="M9 26c-3.4 0-6-2.4-6-5.6 0-2.9 2.2-5.3 5.2-5.6.6-3.9 4.1-6.8 8.3-6.8 3.6 0 6.7 2.1 7.9 5.2.7-.3 1.4-.4 2.2-.4 3.4 0 6.2 2.6 6.2 5.9 0 3.5-3 7.3-7.5 7.3Z"/>
+  <path d="M13.5 18.5c.9-1.6 2.6-2.6 4.6-2.6" opacity="0.55"/>
+`;
+---
+
+<div class="doodles" aria-hidden="true">
+  {
+    doodles.map((d, i) => (
+      <span
+        class="doodle"
+        style={`
+          top:${d.top};
+          left:${d.left};
+          --hue:${d.hue};
+          --drift:${d.drift}s;
+          --depth:${d.depth};
+          --stagger:${i * 1.1}s;
+        `}
+      >
+        <svg
+          viewBox={d.kind === 'butterfly' ? '0 0 40 34' : '0 0 40 34'}
+          width={d.size}
+          height={Math.round(d.size * 0.85)}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          focusable="false"
+          set:html={d.kind === 'butterfly' ? butterfly : cloud}
+        />
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  .doodles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .doodle {
+    position: absolute;
+    color: var(--hue);
+    opacity: 0.5;
+    /*
+     * Parallax: doodles with a smaller --depth travel further as the page
+     * scrolls, so they read as closer to the viewer.
+     */
+    translate: 0 calc(var(--scroll-progress) * -1 * (100vh / var(--depth)) * 6);
+    animation: drift var(--drift) ease-in-out infinite alternate;
+    animation-delay: var(--stagger);
+    will-change: translate;
+  }
+
+  .doodle svg {
+    display: block;
+    overflow: visible;
+  }
+
+  @media (max-width: 640px) {
+    /* Fewer distractions on small screens, where content is already tight. */
+    .doodle:nth-child(n + 4) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .doodle {
+      animation: none;
+      translate: 0 0;
+    }
+  }
+</style>

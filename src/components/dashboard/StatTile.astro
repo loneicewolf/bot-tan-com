@@ -1,0 +1,54 @@
+---
+interface Props {
+  label: string;
+  /** Element id the client script writes the value into. */
+  id: string;
+  /** Appended after the value, e.g. "%" or "/min". */
+  suffix?: string;
+}
+
+const { label, id, suffix } = Astro.props;
+---
+
+<div class="tile">
+  <p class="tile__label">{label}</p>
+  <p class="tile__value">
+    <span id={id}>---</span>{suffix && <span class="tile__suffix">{suffix}</span>}
+  </p>
+</div>
+
+<style>
+  .tile {
+    padding: 0.7rem 0.75rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.3rem;
+  }
+
+  .tile__label {
+    margin: 0;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+  .tile__value {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--color-sky-deep);
+    /* Digits line up as the numbers tick over. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile__suffix {
+    font-size: 0.8rem;
+    margin-left: 0.1rem;
+  }
+</style>

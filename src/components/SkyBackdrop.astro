@@ -1,0 +1,144 @@
+---
+/**
+ * Fixed sky behind the whole page. Four gradient layers — dawn, day, dusk,
+ * night — cross-fade as `--scroll-progress` goes from 0 to 1, so scrolling
+ * through the page reads as a day passing.
+ */
+---
+
+<div class="sky" aria-hidden="true">
+  <div class="sky__layer sky__layer--dawn"></div>
+  <div class="sky__layer sky__layer--day"></div>
+  <div class="sky__layer sky__layer--dusk"></div>
+  <div class="sky__layer sky__layer--night"></div>
+  <div class="sky__clouds"></div>
+  <div class="sky__paper"></div>
+</div>
+
+<style>
+  .sky {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* The cloud layer is deliberately oversized; keep it off the page width. */
+    overflow: hidden;
+    background-color: var(--color-paper);
+  }
+
+  .sky__layer {
+    position: absolute;
+    inset: 0;
+    /*
+     * Each layer peaks at its own point along the scroll and fades out either
+     * side of it. `clamp()` keeps the ends pinned so the first and last
+     * screenful hold a stable colour.
+     */
+    opacity: 0;
+    transition: opacity 120ms linear;
+  }
+
+  .sky__layer--dawn {
+    background: linear-gradient(to bottom, #ffd9b8 0%, #ffeede 40%, var(--color-paper) 100%);
+    opacity: clamp(0, calc(1 - var(--scroll-progress) * 3.2), 1);
+  }
+
+  /*
+   * Peaked layers ramp up, hold, then ramp down. Written as min() of two linear
+   * ramps rather than abs(), which is still too new to rely on cross-browser.
+   */
+  .sky__layer--day {
+    background: linear-gradient(to bottom, #a9e2f2 0%, #d8f1f8 45%, var(--color-paper) 100%);
+    opacity: clamp(
+      0,
+      min(calc((var(--scroll-progress) - 0.06) / 0.3), calc((0.66 - var(--scroll-progress)) / 0.3)),
+      1
+    );
+  }
+
+  .sky__layer--dusk {
+    background: linear-gradient(to bottom, #f5ad78 0%, #f9cc9f 40%, #fde9d5 100%);
+    opacity: clamp(
+      0,
+      min(calc((var(--scroll-progress) - 0.42) / 0.26), calc((1.25 - var(--scroll-progress)) / 0.26)),
+      1
+    );
+  }
+
+  /*
+   * Evening rather than midnight. A full dark sky drained the contrast out of
+   * the paper cards sitting on top, so this stops at a warm indigo and never
+   * quite reaches full opacity.
+   */
+  .sky__layer--night {
+    background: linear-gradient(
+      to bottom,
+      #2e3f7a 0%,
+      #5b6aa8 30%,
+      #9b8fb8 62%,
+      /* Afterglow at the horizon, so the bottom of the page stays warm. */ #e9bda6 100%
+    );
+    opacity: clamp(0, calc((var(--scroll-progress) - 0.9) * 9), 0.85);
+  }
+
+  /* Soft cloud blobs that drift up slowly as the page scrolls. */
+  .sky__clouds {
+    position: absolute;
+    inset: -10% -5%;
+    opacity: 0.55;
+    background-image:
+      radial-gradient(50% 40% at 18% 22%, rgb(255 255 255 / 0.9), transparent 70%),
+      radial-gradient(42% 34% at 76% 14%, rgb(255 255 255 / 0.75), transparent 70%),
+      radial-gradient(56% 40% at 52% 62%, rgb(255 255 255 / 0.6), transparent 72%),
+      radial-gradient(38% 30% at 12% 78%, rgb(255 255 255 / 0.7), transparent 70%);
+    translate: 0 calc(var(--scroll-progress) * -8vh);
+  }
+
+  /* Keeps the paper grain consistent with the cards sitting on top. */
+  .sky__paper {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.25'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Hold a single pleasant daytime sky instead of shifting through the day. */
+    .sky__layer--dawn,
+    .sky__layer--dusk,
+    .sky__layer--night {
+      opacity: 0;
+    }
+    .sky__layer--day {
+      opacity: 1;
+    }
+    .sky__clouds {
+      translate: 0 0;
+    }
+  }
+</style>
+
+<script>
+  // Publishes scroll position as `--scroll-progress` (0 -> 1) on <html>.
+  // Everything motion-related reads from this single variable.
+  const root = document.documentElement;
+  let ticking = false;
+
+  function update() {
+    const scrollable = root.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+    root.style.setProperty('--scroll-progress', Math.min(1, Math.max(0, progress)).toFixed(4));
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+</script>

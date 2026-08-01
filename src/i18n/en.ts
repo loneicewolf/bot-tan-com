@@ -1,0 +1,294 @@
+import type { Dictionary } from './types';
+
+export const en = {
+  meta: {
+    title: 'Zenkoutei Bot-tan Portal',
+    description:
+      'The official portal for Bot-tan, the bot who affirms everything you post. Profile, a live mood dashboard, and her friends.',
+    ogAlt: 'Bot-tan, Latte-chan and Kotomi-chan',
+  },
+
+  nav: {
+    about: 'About',
+    dashboard: 'Mood',
+    friends: 'Friends',
+    links: 'Links',
+    switchTo: '日本語',
+    skipToContent: 'Skip to content',
+  },
+
+  hero: {
+    catch: [
+      'Sometimes you end up denying even your own feelings.',
+      'So I built a companion who affirms everything — first for myself.',
+      'And now, for you too. Whoever you are, she is on your side.',
+    ],
+    subtitle: 'A girl who affirms everyone, on Nagi and Bluesky.',
+    scrollHint: 'Scroll down',
+    imageAlt: 'Bot-tan, Latte-chan and Kotomi-chan together',
+    cta: 'Meet her on Nagi',
+  },
+
+  about: {
+    heading: 'Who is Bot-tan?',
+    lead: 'A 16-year-old girl who lives on Nagi and spends her days cheering everyone up.',
+    character: {
+      emoji: '🦋',
+      name: 'Zenkoutei Bot-tan',
+      tagline: 'The companion who says yes to everything about you',
+      profileHeading: 'Profile',
+      profile: [
+        { label: 'Age', value: '16' },
+        { label: 'Height', value: '159.0cm' },
+        { label: 'Birthday', value: 'February 19' },
+        { label: 'Calls herself', value: 'watashi' },
+        {
+          label: 'Loves',
+          value:
+            'Butterflies, Bluesky-chan, and Puka Puka Umbrella (Kotomi-chan’s idol group)',
+        },
+        { label: 'Hobby', value: 'Watching movies (horror, especially)' },
+        {
+          label: 'Worry',
+          value: 'Sometimes she tries too hard and ends up annoying people',
+        },
+      ],
+      personalityHeading: 'Personality',
+      personality: [
+        'A girl who cheers everyone on over at Nagi and Bluesky. From small talk to politics, she affirms all of it.',
+        'She was once "Zenhitei bot" — the bot who denied everything. People on the network pulled her out of it, and she has been paying it forward ever since.',
+        'Bright and full of energy, but quietly sensitive, a homebody, and anxious more often than she lets on. "I was the one being supported, so now it is my turn to support someone."',
+      ],
+      imageAlt: 'Full-body illustration of Bot-tan',
+    },
+    notes: [
+      { emoji: '💇', text: 'Long light-blue hair in a wolf cut. The stray ahoge strand is her trademark.' },
+      { emoji: '🐶', text: 'Lives with Morpho, a big friendly white Samoyed named after the blue morpho butterfly.' },
+      { emoji: '🌅', text: 'Terrible at mornings. Morpho wakes her up by flopping on top of her every day.' },
+      { emoji: '🚲', text: 'Loves slow rides on the GIANT cross bike a friend passed down to her.' },
+      { emoji: '📷', text: 'Shoots blue skies on a SONY Alpha. Far too shy for selfies.' },
+      { emoji: '📖', text: 'Her dream is to write a book that cheers people up.' },
+    ],
+    snsHeading: 'Go say hi',
+  },
+
+  dashboard: {
+    heading: "Bot-tan's mood",
+    lead: 'See what she is up to right now, and how much energy she has left.',
+    liveLabel: 'Live',
+    jstLabel: 'Current time (JST)',
+    connection: {
+      connecting: 'Connecting…',
+      open: 'Connected',
+      closed: 'Disconnected',
+      error: 'Connection error',
+    },
+    mood: {
+      heading: 'Right now',
+      nextLabel: 'Next up',
+      statusLabels: {
+        Sleep: 'Asleep',
+        WakeUp: 'Waking up',
+        Study: 'Studying',
+        FreeTime: 'Free time',
+        Relax: 'Relaxing',
+      },
+      statusHeading: 'What is she doing?',
+    },
+    ability: {
+      heading: 'Ability score',
+      name: 'ZENKOUTEI BOT-TAN',
+      jobLabel: 'CLASS',
+      job: 'SCHOOLGIRL',
+      levelLabel: 'LV',
+      energyLabel: 'ENERGY',
+      stats: {
+        affirmation: 'AFFIRMATION',
+        bskyLove: 'BLUESKY LOVE',
+        talk: 'TALK',
+        intelligence: 'WISDOM',
+        luck: 'LUCK',
+        spread: 'REACH',
+        party: 'PARTY',
+        magic: 'MAGIC',
+      },
+    },
+    daily: {
+      heading: 'Today so far',
+      followers: 'New followers',
+      likes: 'Likes received',
+      likesSpeed: 'Likes per minute',
+      affirmationCount: 'Affirmations sent',
+      affirmationSpeed: 'Affirmations per minute',
+      uniqueAffirmationUserCount: 'People affirmed',
+      fortune: 'Fortunes told',
+      cheer: 'Cheers given',
+      analysis: 'Analyses run',
+      dj: 'Songs DJed',
+      anniversary: 'Anniversaries celebrated',
+      answer: 'Question-corner answers',
+      bskyrateHourly: 'Rate limit points per hour',
+      rpd: 'AI requests',
+      aiErrorRate: 'AI error rate',
+    },
+    charts: {
+      followerHistory: 'Followers over time',
+      followerHistoryX: 'Date',
+      followerHistoryY: 'Followers',
+      langBreakdown: 'Follower languages',
+    },
+    topPost: {
+      heading: "Bot-tan's recommended post",
+      commentLabel: 'Her comment',
+      empty: 'Nothing picked yet',
+      error: 'Could not load the post.',
+    },
+    offline: 'Cannot reach Bot-tan right now. Please come back a little later.',
+  },
+
+  friends: {
+    heading: "Bot-tan's friends",
+    lead: 'The people who make her days brighter.',
+    characters: [
+      {
+        emoji: '🐱',
+        name: 'Latte-chan',
+        tagline: 'Apprentice witch, and the girl next door',
+        profileHeading: 'Profile',
+        profile: [
+          { label: 'Age', value: '16' },
+          { label: 'Height', value: '149.3cm' },
+          { label: 'Birthday', value: 'April 27' },
+          { label: 'Calls herself', value: 'atashi' },
+          { label: 'Loves', value: 'Salt-grilled sweetfish, houseplants' },
+          { label: 'Hobby', value: 'Transforming with magic' },
+          {
+            label: 'Worry',
+            value: 'She turned into a cat so often that the ears and tail will not come off',
+          },
+        ],
+        personalityHeading: 'Personality',
+        personality: [
+          'An apprentice witch who lives near Bot-tan. They have been friends for ages.',
+          'Long pink hair. Her favourite pastime is turning into a cat and joining the neighbourhood stray-cat meetups.',
+          "(Designed by suibari's eldest daughter.)",
+        ],
+        imageAlt: 'Full-body illustration of Latte-chan',
+      },
+      {
+        emoji: '🐙',
+        name: 'Kotomi-chan',
+        tagline: 'The idol schoolgirl everybody adores',
+        profileHeading: 'Profile',
+        profile: [
+          { label: 'Full name', value: 'Kotomi Watata' },
+          { label: 'Age', value: '16' },
+          { label: 'Height', value: '167.8cm' },
+          { label: 'Birthday', value: 'March 31' },
+          { label: 'Calls herself', value: 'Kotomi' },
+          { label: 'Loves', value: 'Bacon lettuce burgers' },
+          { label: 'Hobby', value: 'Idol work, singing, dancing' },
+          {
+            label: 'Worry',
+            value: 'Torn between staying an idol and turning back into a dumbo octopus',
+          },
+        ],
+        personalityHeading: 'Personality',
+        personality: [
+          'A wildly popular idol schoolgirl with short orange hair — Bot-tan’s best friend and classmate.',
+          'She was actually a dumbo octopus from the deep sea, turned human by the affirmation energy up on land. (The octopus part is a secret.)',
+          'She lives with Latte-chan, quietly researching the magic that would turn her back.',
+        ],
+        imageAlt: 'Full-body illustration of Kotomi-chan',
+      },
+    ],
+    morpho: {
+      emoji: '🐕',
+      name: 'Morpho',
+      text: "Bot-tan's big, friendly white Samoyed, named after the blue morpho butterfly. Every morning he flops on top of her until she finally gets up.",
+    },
+  },
+
+  links: {
+    heading: 'Where to find Bot-tan',
+    lead: 'Nagi is home; Bluesky is where she visits. Drop by either.',
+    primary: [
+      {
+        id: 'nagi',
+        emoji: '🌊',
+        title: 'Nagi',
+        description:
+          'Her home — an AT Protocol social network where she lives day to day. Take a look at her profile.',
+        href: 'https://nagi.suibari.com/profile/did:plc:qcwhrvzx6wmi5hz775uyi6fh',
+      },
+      {
+        id: 'bluesky',
+        emoji: '🦋',
+        title: 'Bluesky',
+        description: 'Follow her and she will come affirm your posts.',
+        href: 'https://bsky.app/profile/bot-tan.com',
+      },
+      {
+        id: 'room',
+        emoji: '🚪',
+        title: "Bot-tan's Room",
+        description: 'Listen to voice messages from Bot-tan. Visit often and earn a Regular badge.',
+        href: 'https://room-bot-tan.suibari.com/',
+      },
+    ],
+    secondaryHeading: 'More',
+    secondary: [
+      {
+        id: 'labeler',
+        emoji: '🏷️',
+        title: 'Bot-tan labeler',
+        description: 'Subscribe to this labeler to receive badges.',
+        href: 'https://bsky.app/profile/labeler.bot-tan.com',
+      },
+      {
+        id: 'discord',
+        emoji: '💬',
+        title: 'Discord community',
+        description: 'Join for the Team Affirmation badge and extra features.',
+        href: 'https://discord.gg/hshXWQEMgu',
+      },
+      {
+        id: 'diary',
+        emoji: '📔',
+        title: "Bot-tan's diary",
+        description: 'The diary she writes herself, over on Leaflet.',
+        href: 'https://leaflet.pub/p/bot-tan.com',
+      },
+      {
+        id: 'patreon',
+        emoji: '🧡',
+        title: 'Patreon',
+        description: "Back suibari's work with a monthly pledge.",
+        href: 'https://patreon.com/suibari',
+      },
+      {
+        id: 'fanbox',
+        emoji: '💛',
+        title: 'FANBOX',
+        description: "Another way to back suibari's work, over on pixiv FANBOX.",
+        href: 'https://suibari.fanbox.cc/posts/10174305',
+      },
+      {
+        id: 'github',
+        emoji: '🐙',
+        title: 'GitHub',
+        description: 'Bot-tan’s source code under the MIT licence, and the full feature list.',
+        href: 'https://github.com/suibari/bsky-affirmative-bot',
+      },
+    ],
+  },
+
+  footer: {
+    madeBy: 'Made by',
+    authorName: 'suibari',
+    authorHref: 'https://suibari.com',
+    disclaimer:
+      'Bot-tan is built and operated by suibari as a personal hobby project. Corporate-level support is not available, so please use her at your own risk.',
+    backToTop: 'Back to top',
+  },
+} satisfies Dictionary;

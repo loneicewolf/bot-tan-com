@@ -1,0 +1,58 @@
+---
+import SketchFrame from './SketchFrame.astro';
+
+interface Props {
+  seed: string;
+  /** Border colour. */
+  color?: string;
+  /** Adds a strip of masking tape across the top edge. */
+  tape?: boolean;
+  /** Reveal animation variant, or false to opt out. */
+  reveal?: 'up' | 'left' | 'right' | 'pop' | false;
+  revealDelay?: number;
+  strokeWidth?: number;
+  double?: boolean;
+  /** Swap the paper grain for graph paper. */
+  paper?: 'grain' | 'graph';
+  class?: string;
+}
+
+const {
+  seed,
+  color = 'var(--color-ink)',
+  tape = false,
+  reveal = 'up',
+  revealDelay = 0,
+  strokeWidth = 2,
+  double = false,
+  paper = 'grain',
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={['sketch-card', tape && 'taped', paper === 'graph' ? 'graph-paper' : 'paper-grain', className]}
+  data-reveal={reveal === false ? undefined : reveal}
+  style={revealDelay ? `--reveal-delay:${revealDelay}ms` : undefined}
+>
+  <SketchFrame seed={seed} color={color} strokeWidth={strokeWidth} double={double} />
+  <div class="sketch-card__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .sketch-card {
+    position: relative;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: 0.75rem;
+    /* Lifted just off the page, like a sheet resting on the desk. */
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 12px 28px -18px color-mix(in srgb, var(--color-ink) 45%, transparent);
+  }
+
+  .sketch-card__body {
+    position: relative;
+    z-index: 1;
+  }
+</style>

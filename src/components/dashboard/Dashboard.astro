@@ -1,0 +1,678 @@
+---
+import Section from '../Section.astro';
+import SketchCard from '../SketchCard.astro';
+import MoodCard from './MoodCard.astro';
+import AbilityCard from './AbilityCard.astro';
+import StatTile from './StatTile.astro';
+import ChartCard from './ChartCard.astro';
+import { useTranslations, bcp47, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const d = t.dashboard.daily;
+
+/** Order matches the original suibari.com/character dashboard. */
+const tiles = [
+  { label: d.followers, id: 'stat-followers' },
+  { label: d.likes, id: 'stat-likes' },
+  { label: d.likesSpeed, id: 'stat-likes-speed' },
+  { label: d.affirmationCount, id: 'stat-affirmation' },
+  { label: d.affirmationSpeed, id: 'stat-affirmation-speed' },
+  { label: d.uniqueAffirmationUserCount, id: 'stat-unique-users' },
+  { label: d.fortune, id: 'stat-fortune' },
+  { label: d.cheer, id: 'stat-cheer' },
+  { label: d.analysis, id: 'stat-analysis' },
+  { label: d.dj, id: 'stat-dj' },
+  { label: d.anniversary, id: 'stat-anniversary' },
+  { label: d.answer, id: 'stat-answer' },
+  { label: d.bskyrateHourly, id: 'stat-bskyrate' },
+  { label: d.rpd, id: 'stat-rpd' },
+  { label: d.aiErrorRate, id: 'stat-ai-error-rate' },
+];
+
+/**
+ * Strings the client script needs. Embedding them as JSON keeps the runtime
+ * code locale-agnostic without duplicating the dictionary in the bundle.
+ */
+const runtimeStrings = {
+  locale: bcp47[lang],
+  useEnglishMood: lang === 'en',
+  connection: t.dashboard.connection,
+  charts: t.dashboard.charts,
+  topPost: t.dashboard.topPost,
+  offline: t.dashboard.offline,
+};
+---
+
+<Section
+  id="dashboard"
+  heading={t.dashboard.heading}
+  lead={t.dashboard.lead}
+  color="var(--color-sky-deep)"
+>
+  <SketchCard seed="dashboard" color="var(--color-sky-deep)" paper="graph" strokeWidth={2.5} double>
+    <div class="dash">
+      <div class="dash__bar">
+        <p class="dash__live">
+          <span class="dash__dot" id="ws-dot" data-state="connecting"></span>
+          <span class="dash__live-text">{t.dashboard.liveLabel}</span>
+          <span class="dash__conn" id="ws-label">{t.dashboard.connection.connecting}</span>
+        </p>
+        <p class="dash__clock">
+          {t.dashboard.jstLabel}: <time id="jst-clock">--:--:--</time>
+        </p>
+      </div>
+
+      <p class="dash__offline" id="dash-offline" hidden>{t.dashboard.offline}</p>
+
+      <MoodCard t={t} />
+
+      <h3 class="dash__heading">{t.dashboard.ability.heading}</h3>
+      <AbilityCard t={t} />
+
+      <h3 class="dash__heading">{t.dashboard.daily.heading}</h3>
+      <div class="dash__tiles">
+        {tiles.map((tile) => <StatTile label={tile.label} id={tile.id} />)}
+      </div>
+
+      <div class="dash__charts">
+        <ChartCard title={t.dashboard.charts.followerHistory} canvasId="follower-chart" />
+        <ChartCard title={t.dashboard.charts.langBreakdown} canvasId="lang-chart" />
+      </div>
+
+      <h3 class="dash__heading">{t.dashboard.topPost.heading}</h3>
+      <div class="dash__post" id="top-post">
+        <p class="dash__post-empty">{t.dashboard.topPost.empty}</p>
+      </div>
+      <p class="dash__comment">
+        <span class="dash__comment-label">{t.dashboard.topPost.commentLabel}</span>
+        <span id="daily-comment">---</span>
+      </p>
+    </div>
+  </SketchCard>
+</Section>
+
+<script
+  is:inline
+  type="application/json"
+  id="dashboard-strings"
+  set:html={JSON.stringify(runtimeStrings)}
+/>
+
+<script>
+  import {
+    connectBotStatus,
+    fetchFollowerHistory,
+    fetchPost,
+    type BotStatusPayload,
+    type BotStatusName,
+    type ConnectionState,
+  } from '../../lib/botStatus';
+
+  interface RuntimeStrings {
+    locale: string;
+    useEnglishMood: boolean;
+    connection: Record<ConnectionState, string>;
+    charts: {
+      followerHistory: string;
+      followerHistoryX: string;
+      followerHistoryY: string;
+      langBreakdown: string;
+    };
+    topPost: { heading: string; commentLabel: string; empty: string; error: string };
+    offline: string;
+  }
+
+  const stringsEl = document.getElementById('dashboard-strings');
+  if (stringsEl?.textContent) {
+    const strings: RuntimeStrings = JSON.parse(stringsEl.textContent);
+    start(strings);
+  }
+
+  function start(strings: RuntimeStrings) {
+    const $ = (id: string) => document.getElementById(id);
+    const setText = (id: string, value: string) => {
+      const el = $(id);
+      if (el) el.textContent = value;
+    };
+
+    const numberFormat = new Intl.NumberFormat(strings.locale);
+    const fmt = (value: number | undefined): string =>
+      typeof value === 'number' && Number.isFinite(value) ? numberFormat.format(value) : '---';
+
+    // ---------------------------------------------------------- JST clock --
+    const clockFormat = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Tokyo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+
+    const tickClock = () => setText('jst-clock', clockFormat.format(new Date()));
+    tickClock();
+    setInterval(tickClock, 1000);
+
+    // --------------------------------------------------- connection state --
+    let hasEverConnected = false;
+
+    const onStateChange = (state: ConnectionState) => {
+      const dot = $('ws-dot');
+      if (dot) dot.dataset.state = state;
+      setText('ws-label', strings.connection[state]);
+
+      if (state === 'open') hasEverConnected = true;
+
+      // Only nag about being offline if we never got a single frame.
+      const offline = $('dash-offline');
+      if (offline) offline.hidden = hasEverConnected || state === 'connecting';
+    };
+
+    // ------------------------------------------------------------ charts ---
+    // Chart.js is ~70KB gzipped; it only loads once the dashboard is on screen.
+    type ChartModule = typeof import('chart.js');
+    let chartLib: { Chart: ChartModule['Chart'] } | null = null;
+    let followerChart: InstanceType<ChartModule['Chart']> | null = null;
+    let langChart: InstanceType<ChartModule['Chart']> | null = null;
+    // Status frames can arrive before the dashboard is scrolled into view, so
+    // language data waits here until Chart.js has actually been loaded.
+    let pendingLang: [string, number][] | null = null;
+    let chartsVisible = false;
+
+    const ink = '#3d3733';
+    const gridColor = 'rgba(59, 126, 161, 0.18)';
+    const palette = ['#3b7ea1', '#7fd4e8', '#4c6fe7', '#f2a0bc', '#f5a25d', '#9bc78a', '#c8a2e0'];
+
+    async function loadCharts() {
+      if (chartLib) return chartLib;
+
+      const [
+        {
+          Chart,
+          LineController,
+          LineElement,
+          PointElement,
+          LinearScale,
+          TimeScale,
+          PieController,
+          ArcElement,
+          Tooltip,
+          Legend,
+          Filler,
+        },
+      ] = await Promise.all([import('chart.js'), import('chartjs-adapter-date-fns')]);
+
+      Chart.register(
+        LineController,
+        LineElement,
+        PointElement,
+        LinearScale,
+        TimeScale,
+        PieController,
+        ArcElement,
+        Tooltip,
+        Legend,
+        Filler,
+      );
+
+      Chart.defaults.font.family = "'Zen Kurenaido', sans-serif";
+      Chart.defaults.color = ink;
+
+      chartLib = { Chart };
+      return chartLib;
+    }
+
+    async function renderFollowerChart() {
+      const canvas = document.getElementById('follower-chart') as HTMLCanvasElement | null;
+      if (!canvas) return;
+
+      const history = await fetchFollowerHistory();
+      if (history.length === 0) return;
+
+      const { Chart } = await loadCharts();
+
+      followerChart?.destroy();
+      followerChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: history.map((p) => p.date),
+          datasets: [
+            {
+              label: strings.charts.followerHistoryY,
+              data: history.map((p) => p.count),
+              borderColor: '#3b7ea1',
+              backgroundColor: 'rgba(127, 212, 232, 0.25)',
+              borderWidth: 2,
+              tension: 0.25,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              type: 'time',
+              time: { unit: 'day', tooltipFormat: 'yyyy/MM/dd', displayFormats: { day: 'MM/dd' } },
+              title: { display: true, text: strings.charts.followerHistoryX },
+              grid: { color: gridColor },
+            },
+            y: {
+              title: { display: true, text: strings.charts.followerHistoryY },
+              grid: { color: gridColor },
+            },
+          },
+        },
+      });
+    }
+
+    async function renderLangChart(lang: [string, number][]) {
+      const canvas = document.getElementById('lang-chart') as HTMLCanvasElement | null;
+      if (!canvas || lang.length === 0) return;
+
+      const { Chart } = await loadCharts();
+
+      const labels = lang.map((entry) => entry[0]);
+      const values = lang.map((entry) => entry[1]);
+
+      if (langChart) {
+        langChart.data.labels = labels;
+        langChart.data.datasets[0]!.data = values;
+        langChart.update();
+        return;
+      }
+
+      langChart = new Chart(canvas, {
+        type: 'pie',
+        data: {
+          labels,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: palette,
+              borderColor: '#fdf8ef',
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 10 } } },
+        },
+      });
+    }
+
+    // ------------------------------------------------------ status frames --
+    let lastTopPostUri: string | null = null;
+
+    const onMessage = (data: BotStatusPayload) => {
+      // --- mood ---
+      const mood = strings.useEnglishMood ? (data.mood_en ?? data.mood) : data.mood;
+      setText('mood-text', mood || '---');
+
+      // Zero-padded HH:mm — seconds add noise to a "next action" time.
+      const nextStepFormat = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+
+      setText(
+        'next-step-time',
+        data.nextStepTime ? nextStepFormat.format(new Date(data.nextStepTime)) : '---',
+      );
+
+      // --- utility scores, and which state is currently active ---
+      const statuses: BotStatusName[] = ['Sleep', 'WakeUp', 'Study', 'FreeTime', 'Relax'];
+      for (const status of statuses) {
+        const score = data.utilities?.[status];
+        setText(`utility-${status}`, typeof score === 'number' ? String(Math.round(score)) : '---');
+
+        const tile = $(`state-${status}`);
+        if (tile) tile.dataset.active = String(data.status === status);
+      }
+
+      // --- ability score, derived exactly as the original dashboard did ---
+      const total = data.totalStats;
+      if (total) {
+        const level = Math.floor((total.followers ?? 0) / 100) + 1;
+        setText('ability-level', String(level));
+        setText('ability-affirmation', fmt(Math.floor((total.affirmationCount ?? 0) / 1000)));
+        setText('ability-bsky-love', fmt(Math.floor((total.likes ?? 0) / 1000)));
+        setText('ability-talk', fmt(Math.floor((total.reply ?? 0) / 100)));
+        setText('ability-intelligence', fmt(total.analysis));
+        setText('ability-luck', fmt(total.fortune));
+        setText('ability-spread', fmt(total.cheer));
+        setText('ability-party', fmt(total.dj));
+        setText('ability-magic', fmt(Math.floor((total.anniversary ?? 0) / 1000)));
+      }
+
+      // --- energy meter ---
+      if (typeof data.energy === 'number') {
+        const energy = data.energy;
+        setText('ability-energy', `${energy.toFixed(1)}%`);
+
+        const active = Math.round(energy / 5);
+        const lit = energy >= 60 ? '#66ff66' : '#ff6666';
+        document.querySelectorAll<HTMLElement>('.meter__seg').forEach((seg, i) => {
+          seg.style.background = i < active ? lit : '#2a2f3a';
+        });
+      }
+
+      // --- daily stats ---
+      const daily = data.dailyStats;
+      if (daily) {
+        setText('stat-followers', fmt(daily.followers));
+        setText('stat-likes', fmt(daily.likes));
+        setText('stat-affirmation', fmt(daily.affirmationCount));
+        setText('stat-unique-users', fmt(daily.uniqueAffirmationUserCount));
+        setText('stat-fortune', fmt(daily.fortune));
+        setText('stat-cheer', fmt(daily.cheer));
+        setText('stat-analysis', fmt(daily.analysis));
+        setText('stat-dj', fmt(daily.dj));
+        setText('stat-anniversary', fmt(daily.anniversary));
+        setText('stat-answer', fmt(daily.answer));
+        setText('stat-rpd', fmt(daily.rpd));
+
+        // AI error rate, as a share of all requests made today.
+        const totalRequests = (daily.rpd ?? 0) + (daily.rpdError ?? 0);
+        const errorRate = totalRequests > 0 ? ((daily.rpdError ?? 0) / totalRequests) * 100 : 0;
+        setText('stat-ai-error-rate', `${errorRate.toFixed(1)}%`);
+
+        // Rates are counts divided by how long the current window has been open.
+        const elapsedSeconds = daily.lastInitializedDate
+          ? (Date.now() - new Date(daily.lastInitializedDate).getTime()) / 1000
+          : 0;
+
+        if (elapsedSeconds > 0) {
+          setText('stat-likes-speed', (((daily.likes ?? 0) / elapsedSeconds) * 60).toFixed(1));
+          setText(
+            'stat-affirmation-speed',
+            (((daily.affirmationCount ?? 0) / elapsedSeconds) * 60).toFixed(1),
+          );
+          setText('stat-bskyrate', (((daily.bskyrate ?? 0) / elapsedSeconds) * 3600).toFixed(1));
+        } else {
+          setText('stat-likes-speed', '---');
+          setText('stat-affirmation-speed', '---');
+          setText('stat-bskyrate', '---');
+        }
+
+        setText('daily-comment', daily.botComment || '---');
+
+        if (daily.lang?.length) {
+          if (chartsVisible) void renderLangChart(daily.lang);
+          else pendingLang = daily.lang;
+        }
+
+        if (daily.topPost && daily.topPost !== lastTopPostUri) {
+          lastTopPostUri = daily.topPost;
+          void renderTopPost(daily.topPost);
+        }
+      }
+    };
+
+    // --------------------------------------------------- recommended post --
+    async function renderTopPost(uri: string) {
+      const container = $('top-post');
+      if (!container) return;
+
+      const post = await fetchPost(uri);
+      if (!post) {
+        container.innerHTML = '';
+        const p = document.createElement('p');
+        p.className = 'dash__post-empty';
+        p.textContent = strings.topPost.error;
+        container.append(p);
+        return;
+      }
+
+      // Built with the DOM API rather than innerHTML so post text can never be
+      // interpreted as markup.
+      const link = document.createElement('a');
+      link.className = 'post';
+      link.href = post.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      const head = document.createElement('div');
+      head.className = 'post__head';
+
+      if (post.authorAvatar) {
+        const avatar = document.createElement('img');
+        avatar.className = 'post__avatar';
+        avatar.src = post.authorAvatar;
+        avatar.alt = '';
+        avatar.loading = 'lazy';
+        avatar.width = 40;
+        avatar.height = 40;
+        head.append(avatar);
+      }
+
+      const handle = document.createElement('span');
+      handle.className = 'post__handle';
+      handle.textContent = `@${post.authorHandle}`;
+      head.append(handle);
+
+      const body = document.createElement('p');
+      body.className = 'post__text';
+      body.textContent = post.text;
+
+      const time = document.createElement('time');
+      time.className = 'post__time';
+      time.dateTime = post.createdAt;
+      time.textContent = new Date(post.createdAt).toLocaleString(strings.locale, {
+        timeZone: 'Asia/Tokyo',
+        hour12: false,
+      });
+
+      link.append(head, body, time);
+      container.replaceChildren(link);
+    }
+
+    // ------------------------------------------------------------- start ---
+    connectBotStatus({ onMessage, onStateChange });
+
+    // Defer the follower chart until the dashboard is actually looked at.
+    const dashboardEl = document.getElementById('dashboard');
+
+    if (dashboardEl) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          observer.disconnect();
+          chartsVisible = true;
+          void renderFollowerChart();
+          if (pendingLang) {
+            void renderLangChart(pendingLang);
+            pendingLang = null;
+          }
+        },
+        { rootMargin: '200px' },
+      );
+      observer.observe(dashboardEl);
+    }
+  }
+</script>
+
+<style>
+  .dash {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .dash__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 2px dashed color-mix(in srgb, var(--color-sky-deep) 30%, transparent);
+  }
+
+  .dash__live {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-hand);
+    font-size: 0.9rem;
+  }
+
+  .dash__dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: #c9a227;
+    box-shadow: 0 0 0 3px color-mix(in srgb, #c9a227 25%, transparent);
+    transition: background 250ms ease, box-shadow 250ms ease;
+  }
+
+  .dash__dot[data-state='open'] {
+    background: #4caf50;
+    box-shadow: 0 0 0 3px rgb(76 175 80 / 0.25);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+
+  .dash__dot[data-state='closed'],
+  .dash__dot[data-state='error'] {
+    background: #d9534f;
+    box-shadow: 0 0 0 3px rgb(217 83 79 / 0.22);
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px rgb(76 175 80 / 0.25);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgb(76 175 80 / 0.08);
+    }
+  }
+
+  .dash__conn {
+    font-size: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+
+  .dash__clock {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dash__offline {
+    margin: 0;
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-latte) 22%, var(--color-paper));
+    border: 1.5px dashed var(--color-latte);
+    font-size: 0.88rem;
+  }
+
+  .dash__heading {
+    margin: 0.5rem 0 -0.5rem;
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--color-sky-deep);
+  }
+
+  .dash__tiles {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  }
+
+  .dash__charts {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 820px) {
+    .dash__charts {
+      grid-template-columns: 1.35fr 1fr;
+    }
+  }
+
+  .dash__post-empty {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+
+  .dash__comment {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .dash__comment-label {
+    font-family: var(--font-hand);
+    color: var(--color-ink-soft);
+  }
+
+  /* Styles for the post card injected by the script above. */
+  .dash :global(.post) {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
+    transition: translate 180ms ease, border-color 180ms ease;
+  }
+
+  .dash :global(.post:hover) {
+    translate: 0 -3px;
+    border-color: var(--color-sky-deep);
+  }
+
+  .dash :global(.post__head) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .dash :global(.post__avatar) {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .dash :global(.post__handle) {
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+  }
+
+  .dash :global(.post__text) {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .dash :global(.post__time) {
+    font-size: 0.75rem;
+    color: var(--color-ink-soft);
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

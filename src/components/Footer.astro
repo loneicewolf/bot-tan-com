@@ -1,0 +1,121 @@
+---
+import { Image } from 'astro:assets';
+import suibariLogo from '../assets/brand/suibari-logo.png';
+import { useTranslations, localizedPath, otherLang, bcp47, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const other = otherLang(lang);
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__made">{t.footer.madeBy}</p>
+
+    <a
+      class="site-footer__brand"
+      href={t.footer.authorHref}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Image
+        src={suibariLogo}
+        alt={t.footer.authorName}
+        widths={[240, 480]}
+        sizes="15rem"
+        loading="lazy"
+      />
+    </a>
+
+    <p class="site-footer__disclaimer">{t.footer.disclaimer}</p>
+  </div>
+
+  <div class="site-footer__bar">
+    <a class="site-footer__link" href={localizedPath(other)} hreflang={bcp47[other]}>
+      {t.nav.switchTo}
+    </a>
+    <a class="site-footer__link" href="#top">{t.footer.backToTop}</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 4rem;
+    padding: 2.75rem 1rem 2rem;
+    color: var(--color-paper);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, #2f3d6b 88%, transparent),
+      #26315a
+    );
+    font-size: 0.9rem;
+  }
+
+  .site-footer__inner {
+    max-width: 44rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .site-footer__made {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+  }
+
+  .site-footer__brand {
+    display: inline-block;
+    transition: translate 180ms ease, scale 180ms ease;
+  }
+
+  .site-footer__brand:hover,
+  .site-footer__brand:focus-visible {
+    translate: 0 -3px;
+    scale: 1.02;
+  }
+
+  .site-footer__brand :global(img) {
+    width: 15rem;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .site-footer__disclaimer {
+    margin: 1.5rem 0 0;
+    color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+    line-height: 1.9;
+    font-size: 0.82rem;
+  }
+
+  .site-footer__bar {
+    max-width: 68rem;
+    margin: 2rem auto 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-paper) 25%, transparent);
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .site-footer__link {
+    font-family: var(--font-hand);
+    color: var(--color-sky);
+    text-decoration: none;
+    border-bottom: 2px dashed transparent;
+    transition: border-color 180ms ease;
+  }
+
+  .site-footer__link:hover,
+  .site-footer__link:focus-visible {
+    border-bottom-color: var(--color-sky);
+  }
+</style>

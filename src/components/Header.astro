@@ -1,0 +1,158 @@
+---
+import { Image } from 'astro:assets';
+import botIcon from '../assets/brand/bot-icon.png';
+import { useTranslations, localizedPath, otherLang, bcp47, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const other = otherLang(lang);
+
+const sections = [
+  { href: '#about', label: t.nav.about },
+  { href: '#dashboard', label: t.nav.dashboard },
+  { href: '#friends', label: t.nav.friends },
+  { href: '#links', label: t.nav.links },
+];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="logo" href={localizedPath(lang)}>
+      <Image src={botIcon} alt="" width={72} height={92} loading="eager" class="logo__mark" />
+      <span class="logo__text">{t.meta.title}</span>
+    </a>
+
+    <nav class="site-nav" aria-label={t.meta.title}>
+      <ul>
+        {
+          sections.map((s) => (
+            <li>
+              <a href={s.href}>{s.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="lang-toggle" href={localizedPath(other)} hreflang={bcp47[other]} lang={bcp47[other]}>
+      {t.nav.switchTo}
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--color-paper) 82%, transparent);
+    border-bottom: 2px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .site-header__inner {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-hand);
+    font-size: 1.05rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo :global(.logo__mark) {
+    width: auto;
+    height: 2.4rem;
+    display: block;
+    animation: bob 3.6s ease-in-out infinite;
+  }
+
+  .logo__text {
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .site-nav {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: 0.35rem 1.1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .site-nav a {
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    padding: 0.2rem 0.1rem;
+    border-bottom: 2px solid transparent;
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+
+  .site-nav a:hover,
+  .site-nav a:focus-visible {
+    color: var(--color-sky-deep);
+    border-bottom-color: var(--color-sky);
+  }
+
+  .lang-toggle {
+    flex-shrink: 0;
+    font-family: var(--font-hand);
+    font-size: 0.9rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.3rem 0.85rem;
+    border: 2px solid var(--color-ink);
+    /* Slightly uneven corners, like a shape drawn by hand. */
+    border-radius: 14px 10px 16px 9px;
+    background: var(--color-paper);
+    transition: background 180ms ease, rotate 180ms ease;
+  }
+
+  .lang-toggle:hover,
+  .lang-toggle:focus-visible {
+    background: var(--color-marker);
+    rotate: -1.5deg;
+  }
+
+  /* The section links are the first thing to go when space runs out. */
+  @media (max-width: 860px) {
+    .site-nav {
+      display: none;
+    }
+    .site-header__inner {
+      justify-content: space-between;
+    }
+  }
+
+  /* On the narrowest screens the icon carries the branding on its own. */
+  @media (max-width: 400px) {
+    .logo__text {
+      font-size: 0.95rem;
+      white-space: normal;
+      line-height: 1.3;
+    }
+  }
+</style>

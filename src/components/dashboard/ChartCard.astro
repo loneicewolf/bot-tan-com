@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  canvasId: string;
+}
+
+const { title, canvasId } = Astro.props;
+---
+
+<figure class="chart">
+  <figcaption class="chart__title">{title}</figcaption>
+  <div class="chart__canvas">
+    <canvas id={canvasId} aria-label={title} role="img"></canvas>
+  </div>
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+    padding: 0.9rem 1rem 1rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
+    min-width: 0;
+  }
+
+  .chart__title {
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+
+  /* Fixed-height box so Chart.js has a stable area to draw into. */
+  .chart__canvas {
+    position: relative;
+    height: 15rem;
+  }
+
+  .chart__canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>

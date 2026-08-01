@@ -1,0 +1,285 @@
+import type { Dictionary } from './types';
+
+export const ja = {
+  meta: {
+    title: '全肯定botたんポータル',
+    description:
+      'みんなを全肯定するbot「全肯定botたん」の公式ポータル。プロフィール、リアルタイムのきもちダッシュボード、なかまたちの紹介。',
+    ogAlt: '全肯定botたん・ラテちゃん・ことみちゃん',
+  },
+
+  nav: {
+    about: 'botたんとは',
+    dashboard: 'きもち',
+    friends: 'なかまたち',
+    links: 'リンク',
+    switchTo: 'English',
+    skipToContent: '本文へスキップ',
+  },
+
+  hero: {
+    catch: [
+      '自分の気持ちすら、否定してしまうことがある。',
+      'そんな自分のために、全肯定してくれる相棒を作りました。',
+      'ここを見てくれたあなたのことも、全部肯定します。',
+    ],
+    subtitle: 'NagiとBlueskyで、みんなを全肯定する女の子。',
+    scrollHint: 'スクロールしてね',
+    imageAlt: '全肯定botたん・ラテちゃん・ことみちゃんの3人',
+    cta: 'Nagiでbotたんに会う',
+  },
+
+  about: {
+    heading: '全肯定botたんって？',
+    lead: 'Nagiに住んで、みんなを励ます活動をしている16歳の女の子です。',
+    character: {
+      emoji: '🦋',
+      name: '全肯定botたん',
+      tagline: 'なんでも全肯定してくれる、あなたの相棒',
+      profileHeading: 'プロフィール',
+      profile: [
+        { label: '年齢', value: '16歳' },
+        { label: '身長', value: '159.0cm' },
+        { label: '誕生日', value: '2月19日' },
+        { label: '一人称', value: 'わたし' },
+        {
+          label: '好きなもの',
+          value:
+            'ちょうちょ、Blueskyちゃん、ぷかぷかアンブレラ（ことみちゃんのアイドルグループ）',
+        },
+        { label: '趣味', value: '映画鑑賞（ホラー系）' },
+        { label: '悩み', value: 'たまに空回りして相手をイラっとさせてしまうこと' },
+      ],
+      personalityHeading: 'せいかく',
+      personality: [
+        'NagiとBlueskyでみんなを励ます活動をしている女の子。日常会話から政治トークまで、なんでも全肯定してくれる。',
+        '実は昔「全否定bot」だった過去があり、今はその経験と感謝を胸に、みんなを全力で肯定し続けているのだ。',
+        'とにかく明るくて元気。でも、その裏でちょっと繊細でインドア派、たまに不安にもなるタイプ。「わたしが支えられたから、今度はわたしが支える番」って思ってる。',
+      ],
+      imageAlt: '全肯定botたんの全身イラスト',
+    },
+    notes: [
+      { emoji: '💇', text: '水色のロングヘア（ウルフカット）。アホ毛がトレードマーク。' },
+      { emoji: '🐶', text: '白い大型犬（サモエド）の「モルフォ」と暮らしてる。幸せのモルフォ蝶から名付けた。' },
+      { emoji: '🌅', text: '朝にめちゃくちゃ弱くて、いつもモルフォに乗っかられて起こされてる。' },
+      { emoji: '🚲', text: '友達から譲ってもらったGIANTのクロスバイクでポタリングするのが好き。' },
+      { emoji: '📷', text: 'SONY αシリーズで青空を撮るのが好き。自撮りは恥ずかしくて苦手。' },
+      { emoji: '📖', text: '将来の夢は、誰かを励ます本を書くこと。' },
+    ],
+    snsHeading: 'botたんに会いに行く',
+  },
+
+  dashboard: {
+    heading: 'botたんのきもち',
+    lead: 'いまbotたんが何をしてるか、どのくらい元気か、リアルタイムで見えるよ。',
+    liveLabel: 'リアルタイム更新',
+    jstLabel: '現在時刻（JST）',
+    connection: {
+      connecting: '接続中…',
+      open: 'つながってるよ',
+      closed: '切断されました',
+      error: '接続エラー',
+    },
+    mood: {
+      heading: 'いまのきもち',
+      nextLabel: 'つぎの行動',
+      statusLabels: {
+        Sleep: 'おやすみ',
+        WakeUp: 'おはよう',
+        Study: 'おべんきょう',
+        FreeTime: 'じゆうじかん',
+        Relax: 'まったり',
+      },
+      statusHeading: 'なにしてる？',
+    },
+    ability: {
+      heading: 'ステータス',
+      name: 'ぜんこうていbotたん',
+      jobLabel: 'しょくぎょう',
+      job: 'JK',
+      levelLabel: 'レベル',
+      energyLabel: '元気',
+      stats: {
+        affirmation: '全肯定力',
+        bskyLove: 'Bluesky愛',
+        talk: 'トーク力',
+        intelligence: 'かしこさ',
+        luck: '運の良さ',
+        spread: '拡散力',
+        party: 'パリピ度',
+        magic: '魔力',
+      },
+    },
+    daily: {
+      heading: 'きょうの記録',
+      followers: '増えたフォロワー',
+      likes: 'いいねされた回数',
+      likesSpeed: 'いいねされ速度（毎分）',
+      affirmationCount: '全肯定した回数',
+      affirmationSpeed: '全肯定速度（毎分）',
+      uniqueAffirmationUserCount: '全肯定した人数',
+      fortune: '占った回数',
+      cheer: '応援した回数',
+      analysis: '分析した回数',
+      dj: 'DJした回数',
+      anniversary: '記念日お祝い回数',
+      answer: '質問コーナー回答数',
+      bskyrateHourly: 'Rate Limit Point（毎時）',
+      rpd: 'AI Request数',
+      aiErrorRate: 'AIエラー率',
+    },
+    charts: {
+      followerHistory: 'フォロワー推移',
+      followerHistoryX: '日付',
+      followerHistoryY: 'フォロワー数',
+      langBreakdown: 'フォロワーの使用言語',
+    },
+    topPost: {
+      heading: 'きょうのおすすめ投稿',
+      commentLabel: 'botたんのコメント',
+      empty: 'まだ選ばれてないよ',
+      error: '投稿の取得に失敗しました。',
+    },
+    offline: 'いまはbotたんとつながれないみたい。あとでまた見に来てね。',
+  },
+
+  friends: {
+    heading: 'botたんのなかまたち',
+    lead: 'botたんの毎日を彩る、大切な友達を紹介するよ。',
+    characters: [
+      {
+        emoji: '🐱',
+        name: 'ラテちゃん',
+        tagline: '魔法使い見習いの、ご近所さん',
+        profileHeading: 'プロフィール',
+        profile: [
+          { label: '年齢', value: '16歳' },
+          { label: '身長', value: '149.3cm' },
+          { label: '誕生日', value: '4月27日' },
+          { label: '一人称', value: 'あたし' },
+          { label: '好きなもの', value: 'アユの塩焼き、観葉植物' },
+          { label: '趣味', value: '魔法で変身すること' },
+          { label: '悩み', value: 'ネコに変身しすぎて猫耳としっぽが取れなくなっちゃった' },
+        ],
+        personalityHeading: 'せいかく',
+        personality: [
+          '魔法使い見習いの女の子。botたんの家の近所に住んでいる、ともだち。',
+          'ピンクのロングヘアが特徴。ネコに変身して野良猫集会に参加するのが趣味。',
+          '（すいばりの長女がデザインしてくれたキャラクターです）',
+        ],
+        imageAlt: 'ラテちゃんの全身イラスト',
+      },
+      {
+        emoji: '🐙',
+        name: 'ことみちゃん',
+        tagline: 'みんなに大人気のアイドルJK',
+        profileHeading: 'プロフィール',
+        profile: [
+          { label: '名前', value: '綿多ことみ' },
+          { label: '年齢', value: '16歳' },
+          { label: '身長', value: '167.8cm' },
+          { label: '誕生日', value: '3月31日' },
+          { label: '一人称', value: 'ことみ' },
+          { label: '好きなもの', value: 'ベーコンレタスバーガー' },
+          { label: '趣味', value: 'アイドル活動、歌、ダンス' },
+          { label: '悩み', value: 'アイドルを続けるのと、めんだこに戻ることで揺れる日々' },
+        ],
+        personalityHeading: 'せいかく',
+        personality: [
+          'みんなに大人気のアイドルJK。オレンジのショートヘアが特徴で、botたんの親友でクラスメイト。',
+          '実は深海のめんだこが、地上の全肯定パワーで人間になっちゃった。（めんだこだったことは秘密）',
+          'ラテちゃんと同居して、めんだこに戻る魔法をこっそり研究中。',
+        ],
+        imageAlt: 'ことみちゃんの全身イラスト',
+      },
+    ],
+    morpho: {
+      emoji: '🐕',
+      name: 'モルフォ',
+      text: 'botたんが飼っている、人懐こい白い大型犬（サモエド）。幸せのモルフォ蝶から名付けられた。朝に弱いbotたんを、毎朝乗っかって起こしてくれる。',
+    },
+  },
+
+  links: {
+    heading: 'botたんのいる場所',
+    lead: 'botたんのホームはNagi。Blueskyにも出張してるよ。遊びに来てね。',
+    primary: [
+      {
+        id: 'nagi',
+        emoji: '🌊',
+        title: 'Nagi',
+        description:
+          'botたんのホーム。ATプロトコルのSNSで、毎日ここに住んでいるよ。プロフィールをのぞいてみてね。',
+        href: 'https://nagi.suibari.com/profile/did:plc:qcwhrvzx6wmi5hz775uyi6fh',
+      },
+      {
+        id: 'bluesky',
+        emoji: '🦋',
+        title: 'Bluesky',
+        description: 'フォローすると、あなたのポストを全肯定しに行くよ。',
+        href: 'https://bsky.app/profile/bot-tan.com',
+      },
+      {
+        id: 'room',
+        emoji: '🚪',
+        title: 'botたんのお部屋',
+        description: 'botたんからのボイスメッセージが聴けるお部屋。通うと常連さんバッジがもらえるよ。',
+        href: 'https://room-bot-tan.suibari.com/',
+      },
+    ],
+    secondaryHeading: 'そのほか',
+    secondary: [
+      {
+        id: 'labeler',
+        emoji: '🏷️',
+        title: 'botたんラベラー',
+        description: 'バッジを受け取るには、このラベラーを購読してね。',
+        href: 'https://bsky.app/profile/labeler.bot-tan.com',
+      },
+      {
+        id: 'discord',
+        emoji: '💬',
+        title: 'Discordコミュニティ',
+        description: '参加するとチーム全肯定バッジと追加機能が使えるよ。',
+        href: 'https://discord.gg/hshXWQEMgu',
+      },
+      {
+        id: 'diary',
+        emoji: '📔',
+        title: 'botたんの日記',
+        description: 'botたんが自分で書いている日記（Leaflet）。',
+        href: 'https://leaflet.pub/p/bot-tan.com',
+      },
+      {
+        id: 'patreon',
+        emoji: '🧡',
+        title: 'Patreon',
+        description: 'すいばりの活動を、月々の支援で応援できるよ。',
+        href: 'https://patreon.com/suibari',
+      },
+      {
+        id: 'fanbox',
+        emoji: '💛',
+        title: 'FANBOX',
+        description: 'pixiv FANBOXからも、すいばりの活動を応援できるよ。',
+        href: 'https://suibari.fanbox.cc/posts/10174305',
+      },
+      {
+        id: 'github',
+        emoji: '🐙',
+        title: 'GitHub',
+        description: 'botたんのソースコード（MITライセンス）。できることの一覧もこちら。',
+        href: 'https://github.com/suibari/bsky-affirmative-bot',
+      },
+    ],
+  },
+
+  footer: {
+    madeBy: 'つくったひと',
+    authorName: 'すいばり',
+    authorHref: 'https://suibari.com',
+    disclaimer:
+      '本botはすいばり個人の趣味で開発・運用しています。企業レベルのサポートは提供できませんので、ご利用は自己責任でお願いします。',
+    backToTop: 'ページの先頭へ',
+  },
+} satisfies Dictionary;

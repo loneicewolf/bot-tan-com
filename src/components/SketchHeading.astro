@@ -1,0 +1,71 @@
+---
+import { sketchUnderline } from '../lib/sketch';
+
+interface Props {
+  /** Heading level. Sections use 2, cards use 3. */
+  as?: 'h1' | 'h2' | 'h3';
+  seed: string;
+  color?: string;
+  id?: string;
+  class?: string;
+}
+
+const {
+  as: Tag = 'h2',
+  seed,
+  color = 'var(--color-sky-deep)',
+  id,
+  class: className = '',
+} = Astro.props as Props;
+
+const { d, length } = sketchUnderline(seed);
+---
+
+<Tag id={id} class:list={['sketch-heading', className]}>
+  <span class="sketch-heading__text"><slot /></span>
+  <svg
+    class="sketch-heading__rule sketch-frame"
+    viewBox="0 0 100 10"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+    style={`--sketch-length:${length}; color:${color};`}
+  >
+    <path
+      d={d}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="3"
+      stroke-linecap="round"
+      vector-effect="non-scaling-stroke"
+    />
+  </svg>
+</Tag>
+
+<style>
+  .sketch-heading {
+    position: relative;
+    /* Hugs its text so the underline stops at the end of the words. */
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 0 1.75rem;
+    font-family: var(--font-hand);
+    line-height: 1.35;
+  }
+
+  .sketch-heading__text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sketch-heading__rule {
+    position: absolute;
+    left: 0;
+    bottom: -0.55rem;
+    width: 100%;
+    height: 0.7rem;
+    overflow: visible;
+    pointer-events: none;
+  }
+</style>

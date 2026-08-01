@@ -1,0 +1,59 @@
+---
+import SketchHeading from './SketchHeading.astro';
+
+interface Props {
+  id: string;
+  heading: string;
+  /** Sits under the heading, in a lighter tone. */
+  lead?: string;
+  /** Accent colour for the heading underline. */
+  color?: string;
+  /** Extra classes on the <section> element. */
+  class?: string;
+}
+
+const { id, heading, lead, color, class: className = '' } = Astro.props;
+---
+
+<section id={id} class:list={['section', className]}>
+  <div class="section__inner">
+    <header class="section__head" data-reveal="up">
+      <SketchHeading as="h2" seed={`heading-${id}`} color={color} class="section__title">
+        {heading}
+      </SketchHeading>
+      {lead && <p class="section__lead">{lead}</p>}
+    </header>
+
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: clamp(3.5rem, 9vw, 6rem);
+  }
+
+  .section__inner {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .section__head {
+    margin-bottom: 2.5rem;
+  }
+
+  .section__title {
+    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+    /* Underline needs room; the heading component draws it just below. */
+    display: inline-block;
+    margin-bottom: 1.25rem;
+  }
+
+  .section__lead {
+    margin: 0;
+    max-width: 44rem;
+    color: var(--color-ink-soft);
+    font-size: 1.02rem;
+  }
+</style>

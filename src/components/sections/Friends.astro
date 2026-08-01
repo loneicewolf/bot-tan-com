@@ -1,0 +1,87 @@
+---
+import latte from '../../assets/characters/latte.png';
+import kotomi from '../../assets/characters/kotomi.png';
+import Section from '../Section.astro';
+import CharacterCard from '../CharacterCard.astro';
+import SketchCard from '../SketchCard.astro';
+import { useTranslations, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const [latteCopy, kotomiCopy] = t.friends.characters;
+---
+
+<Section id="friends" heading={t.friends.heading} lead={t.friends.lead} color="var(--color-latte)">
+  <div class="friends">
+    {
+      latteCopy && (
+        <CharacterCard
+          seed="card-latte"
+          character={latteCopy}
+          image={latte}
+          color="var(--color-latte)"
+          inkColor="var(--color-latte-ink)"
+        />
+      )
+    }
+
+    {
+      kotomiCopy && (
+        <CharacterCard
+          seed="card-kotomi"
+          character={kotomiCopy}
+          image={kotomi}
+          color="var(--color-kotomi)"
+          inkColor="var(--color-kotomi-ink)"
+          flip
+        />
+      )
+    }
+
+    <SketchCard seed="card-morpho" color="var(--color-morpho)" tape reveal="up" class="morpho">
+      <p class="morpho__name">
+        <span class="morpho__emoji" aria-hidden="true">{t.friends.morpho.emoji}</span>
+        {t.friends.morpho.name}
+      </p>
+      <p class="morpho__text">{t.friends.morpho.text}</p>
+    </SketchCard>
+  </div>
+</Section>
+
+<style>
+  .friends {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .morpho {
+    max-width: 44rem;
+    margin-inline: auto;
+    width: 100%;
+    text-align: center;
+  }
+
+  .morpho__name {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: var(--color-morpho);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .morpho__emoji {
+    font-family: var(--font-emoji);
+  }
+
+  .morpho__text {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+</style>

@@ -1,0 +1,151 @@
+---
+import type { Dictionary } from '../../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const s = t.dashboard.ability.stats;
+
+/** The 20 energy-meter segments are static markup; the script tints them. */
+const segments = Array.from({ length: 20 }, (_, i) => i);
+
+const rows = [
+  { label: s.affirmation, id: 'ability-affirmation' },
+  { label: s.bskyLove, id: 'ability-bsky-love' },
+  { label: s.talk, id: 'ability-talk' },
+  { label: s.intelligence, id: 'ability-intelligence' },
+  { label: s.luck, id: 'ability-luck' },
+  { label: s.spread, id: 'ability-spread' },
+  { label: s.party, id: 'ability-party' },
+  { label: s.magic, id: 'ability-magic' },
+];
+---
+
+<div class="ability">
+  <div class="ability__head">
+    <p class="ability__name">{t.dashboard.ability.name}</p>
+    <p class="ability__job">{t.dashboard.ability.jobLabel}：{t.dashboard.ability.job}</p>
+    <p class="ability__level">
+      {t.dashboard.ability.levelLabel}：<span id="ability-level">1</span>
+    </p>
+  </div>
+
+  <div class="ability__energy">
+    <p class="ability__energy-label">
+      {t.dashboard.ability.energyLabel}：<span id="ability-energy">---%</span>
+    </p>
+    <div class="meter" role="img" aria-labelledby="ability-energy">
+      {segments.map((i) => <span class="meter__seg" data-index={i} />)}
+    </div>
+  </div>
+
+  <hr class="ability__rule" />
+
+  <dl class="ability__stats">
+    {
+      rows.map((row) => (
+        <div class="ability__stat">
+          <dt>{row.label}</dt>
+          <dd id={row.id}>---</dd>
+        </div>
+      ))
+    }
+  </dl>
+</div>
+
+<style>
+  /*
+   * A deliberate tonal break: the rest of the page is soft paper, this panel is
+   * a black-and-green terminal, like an RPG status window taped into the diary.
+   */
+  .ability {
+    font-family: var(--font-dot);
+    background: #14161c;
+    color: #d8e6dd;
+    border-radius: 0.5rem;
+    padding: 1.1rem 1.25rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    box-shadow: inset 0 0 0 2px #3a4150, 0 8px 20px -14px rgb(0 0 0 / 0.8);
+  }
+
+  .ability__head {
+    display: grid;
+    gap: 0.15rem;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  }
+
+  .ability__name {
+    margin: 0;
+    color: #7fe0a8;
+    grid-column: 1 / -1;
+  }
+
+  .ability__job,
+  .ability__level {
+    margin: 0;
+    color: #a8b6c4;
+    font-size: 0.9rem;
+  }
+
+  .ability__energy {
+    margin-top: 0.9rem;
+  }
+
+  .ability__energy-label {
+    margin: 0 0 0.35rem;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meter {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 2px;
+    height: 1.4rem;
+    padding: 3px;
+    border: 2px solid #3a4150;
+    border-radius: 3px;
+  }
+
+  .meter__seg {
+    background: #2a2f3a;
+    border-radius: 1px;
+    transition: background 220ms ease;
+  }
+
+  .ability__rule {
+    border: 0;
+    border-top: 1px solid #3a4150;
+    margin: 0.9rem 0;
+  }
+
+  .ability__stats {
+    margin: 0;
+    display: grid;
+    gap: 0.15rem 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+    font-size: 0.92rem;
+  }
+
+  .ability__stat {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px dotted #333a47;
+    padding-block: 0.1rem;
+  }
+
+  .ability__stat dt {
+    color: #a8b6c4;
+    margin: 0;
+  }
+
+  .ability__stat dd {
+    margin: 0;
+    color: #ffe9a8;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

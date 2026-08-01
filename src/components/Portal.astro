@@ -1,0 +1,20 @@
+---
+import Hero from './sections/Hero.astro';
+import About from './sections/About.astro';
+import Dashboard from './dashboard/Dashboard.astro';
+import Friends from './sections/Friends.astro';
+import Links from './sections/Links.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<Hero lang={lang} />
+<About lang={lang} />
+<Dashboard lang={lang} />
+<Friends lang={lang} />
+<Links lang={lang} />

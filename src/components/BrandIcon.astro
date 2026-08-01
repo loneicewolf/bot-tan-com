@@ -1,0 +1,29 @@
+---
+import { BRAND_ICON_PATHS } from '../lib/brandIcons';
+import type { LinkId } from '../i18n';
+
+interface Props {
+  id: LinkId;
+  size?: number;
+  class?: string;
+}
+
+const { id, size = 20, class: className = '' } = Astro.props;
+
+const d = BRAND_ICON_PATHS[id];
+---
+
+{
+  d && (
+    <svg
+      class={className}
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path fill="currentColor" d={d} />
+    </svg>
+  )
+}
