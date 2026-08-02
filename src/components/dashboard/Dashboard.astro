@@ -2,10 +2,20 @@
 import Section from '../Section.astro';
 import SketchCard from '../SketchCard.astro';
 import MoodCard from './MoodCard.astro';
-import AbilityCard from './AbilityCard.astro';
+import HealthStrip from './HealthStrip.astro';
+import DayTimeline from './DayTimeline.astro';
+import NetworkPanel from './NetworkPanel.astro';
+import TopPostCard from './TopPostCard.astro';
 import StatTile from './StatTile.astro';
 import ChartCard from './ChartCard.astro';
 import { useTranslations, bcp47, type Lang } from '../../i18n';
+import {
+  EVENT_EMOJI,
+  HEALTH_COLORS,
+  NETWORK_COLORS,
+  STATUS_COLORS,
+  STATUS_EMOJI,
+} from '../../lib/dashboardTheme';
 
 interface Props {
   lang: Lang;
@@ -13,45 +23,67 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const d = t.dashboard.daily;
+const d = t.dashboard;
 
-/** Order matches the original suibari.com/character dashboard. */
-const tiles = [
-  { label: d.followers, id: 'stat-followers' },
-  { label: d.likes, id: 'stat-likes' },
-  { label: d.likesSpeed, id: 'stat-likes-speed' },
-  { label: d.affirmationCount, id: 'stat-affirmation' },
-  { label: d.affirmationSpeed, id: 'stat-affirmation-speed' },
-  { label: d.uniqueAffirmationUserCount, id: 'stat-unique-users' },
-  { label: d.fortune, id: 'stat-fortune' },
-  { label: d.cheer, id: 'stat-cheer' },
-  { label: d.analysis, id: 'stat-analysis' },
-  { label: d.dj, id: 'stat-dj' },
-  { label: d.anniversary, id: 'stat-anniversary' },
-  { label: d.answer, id: 'stat-answer' },
-  { label: d.bskyrateHourly, id: 'stat-bskyrate' },
-  { label: d.rpd, id: 'stat-rpd' },
-  { label: d.aiErrorRate, id: 'stat-ai-error-rate' },
+/**
+ * Bluesky's counters come from the shared `totalStats` bucket, which is
+ * effectively Bluesky-only — Nagi touches just `reply` and `conversation`, and
+ * neither is shown here. Nagi's numbers are counted straight out of its own
+ * schema, so the two columns never double-count each other.
+ */
+const bskyTiles = [
+  { label: d.bsky.currentFollowers, id: 'bsky-followers', trend: true, note: true, size: 'lead' as const },
+  { label: d.bsky.newFollowers, id: 'bsky-new-followers', trend: true },
+  { label: d.bsky.likes, id: 'bsky-likes', trend: true },
+  { label: d.bsky.affirmations, id: 'bsky-affirmations', trend: true },
+  { label: d.bsky.affirmedUsers, id: 'bsky-affirmed-users', trend: true },
+  { label: d.bsky.fortune, id: 'bsky-fortune' },
+  { label: d.bsky.cheer, id: 'bsky-cheer' },
+  { label: d.bsky.analysis, id: 'bsky-analysis' },
+  { label: d.bsky.dj, id: 'bsky-dj' },
+  { label: d.bsky.anniversary, id: 'bsky-anniversary' },
+  { label: d.bsky.answer, id: 'bsky-answer' },
+  { label: d.bsky.rateLimitPoints, id: 'bsky-rate' },
+];
+
+const nagiTiles = [
+  { label: d.nagi.totalUsers, id: 'nagi-users', trend: true, note: false, size: 'lead' as const },
+  { label: d.nagi.reactions, id: 'nagi-reactions', trend: true, note: true },
+  { label: d.nagi.affirmations, id: 'nagi-affirmations', trend: true, note: true },
+  { label: d.nagi.affirmedUsers, id: 'nagi-affirmed-users', trend: true, note: true },
+  { label: d.nagi.analyses, id: 'nagi-analyses', trend: true, note: true },
 ];
 
 /**
- * Strings the client script needs. Embedding them as JSON keeps the runtime
- * code locale-agnostic without duplicating the dictionary in the bundle.
+ * Strings and tokens the client script needs. Embedding them as JSON keeps the
+ * runtime code locale-agnostic without duplicating the dictionary in the bundle.
  */
 const runtimeStrings = {
   locale: bcp47[lang],
   useEnglishMood: lang === 'en',
-  connection: t.dashboard.connection,
-  charts: t.dashboard.charts,
-  topPost: t.dashboard.topPost,
-  offline: t.dashboard.offline,
+  connection: d.connection,
+  charts: d.charts,
+  topPost: d.topPost,
+  offline: d.offline,
+  health: d.health,
+  timeline: d.timeline,
+  statusLabels: d.mood.statusLabels,
+  energyAria: d.energy.aria,
+  totalSuffix: d.totalSuffix,
+  tokens: {
+    status: STATUS_COLORS,
+    statusEmoji: STATUS_EMOJI,
+    network: NETWORK_COLORS,
+    healthState: HEALTH_COLORS,
+    eventEmoji: EVENT_EMOJI,
+  },
 };
 ---
 
 <Section
   id="dashboard"
-  heading={t.dashboard.heading}
-  lead={t.dashboard.lead}
+  heading={d.heading}
+  lead={d.lead}
   color="var(--color-sky-deep)"
 >
   <SketchCard seed="dashboard" color="var(--color-sky-deep)" paper="graph" strokeWidth={2.5} double>
@@ -59,39 +91,76 @@ const runtimeStrings = {
       <div class="dash__bar">
         <p class="dash__live">
           <span class="dash__dot" id="ws-dot" data-state="connecting"></span>
-          <span class="dash__live-text">{t.dashboard.liveLabel}</span>
-          <span class="dash__conn" id="ws-label">{t.dashboard.connection.connecting}</span>
+          <span class="dash__live-text">{d.liveLabel}</span>
+          <span class="dash__conn" id="ws-label">{d.connection.connecting}</span>
         </p>
         <p class="dash__clock">
-          {t.dashboard.jstLabel}: <time id="jst-clock">--:--:--</time>
+          {d.jstLabel}: <time id="jst-clock">--:--:--</time>
         </p>
       </div>
 
-      <p class="dash__offline" id="dash-offline" hidden>{t.dashboard.offline}</p>
+      <p class="dash__offline" id="dash-offline" hidden>{d.offline}</p>
+
+      <HealthStrip t={t} />
+
+      <hr class="dash__rule" />
 
       <MoodCard t={t} />
 
-      <h3 class="dash__heading">{t.dashboard.ability.heading}</h3>
-      <AbilityCard t={t} />
+      <hr class="dash__rule" />
 
-      <h3 class="dash__heading">{t.dashboard.daily.heading}</h3>
-      <div class="dash__tiles">
-        {tiles.map((tile) => <StatTile label={tile.label} id={tile.id} />)}
+      <DayTimeline t={t} />
+
+      <hr class="dash__rule" />
+
+      <h3 class="dash__heading">{d.common.heading}</h3>
+      <div class="dash__common">
+        <StatTile label={d.common.aiRequests} id="ai-requests" trend />
+        <StatTile label={d.common.aiErrorRate} id="ai-error-rate" suffix="%" trend />
       </div>
 
-      <div class="dash__charts">
-        <ChartCard title={t.dashboard.charts.followerHistory} canvasId="follower-chart" />
-        <ChartCard title={t.dashboard.charts.langBreakdown} canvasId="lang-chart" />
-      </div>
+      <TopPostCard t={t} />
 
-      <h3 class="dash__heading">{t.dashboard.topPost.heading}</h3>
-      <div class="dash__post" id="top-post">
-        <p class="dash__post-empty">{t.dashboard.topPost.empty}</p>
+      <hr class="dash__rule" />
+
+      <div class="dash__networks">
+        <NetworkPanel id="panel-bsky" title={d.bsky.heading} emoji="🦋" color={NETWORK_COLORS.bsky}>
+          <div class="dash__tiles">
+            {
+              bskyTiles.map((tile) => (
+                <StatTile
+                  label={tile.label}
+                  id={tile.id}
+                  trend={tile.trend}
+                  note={tile.note}
+                  size={tile.size}
+                  color={NETWORK_COLORS.bsky}
+                />
+              ))
+            }
+          </div>
+          <ChartCard title={d.charts.followerHistory} canvasId="follower-chart" />
+          <ChartCard title={d.charts.langBreakdown} canvasId="lang-chart" />
+        </NetworkPanel>
+
+        <NetworkPanel id="panel-nagi" title={d.nagi.heading} emoji="🌊" color={NETWORK_COLORS.nagi}>
+          <div class="dash__tiles">
+            {
+              nagiTiles.map((tile) => (
+                <StatTile
+                  label={tile.label}
+                  id={tile.id}
+                  trend={tile.trend}
+                  note={tile.note}
+                  size={tile.size}
+                  color={NETWORK_COLORS.nagi}
+                />
+              ))
+            }
+          </div>
+          <ChartCard title={d.charts.nagiUserHistory} canvasId="nagi-user-chart" />
+        </NetworkPanel>
       </div>
-      <p class="dash__comment">
-        <span class="dash__comment-label">{t.dashboard.topPost.commentLabel}</span>
-        <span id="daily-comment">---</span>
-      </p>
     </div>
   </SketchCard>
 </Section>
@@ -107,11 +176,20 @@ const runtimeStrings = {
   import {
     connectBotStatus,
     fetchFollowerHistory,
-    fetchPost,
+    fetchHistory,
+    fetchTimeline,
+    resolveTopPost,
     type BotStatusPayload,
     type BotStatusName,
     type ConnectionState,
+    type HealthSnapshot,
+    type HealthState,
+    type HealthTileId,
+    type HistoryPayload,
+    type TimelinePayload,
+    type TopPostPayload,
   } from '../../lib/botStatus';
+  import { sketchSparkline } from '../../lib/sketch';
 
   interface RuntimeStrings {
     locale: string;
@@ -121,17 +199,57 @@ const runtimeStrings = {
       followerHistory: string;
       followerHistoryX: string;
       followerHistoryY: string;
+      nagiUserHistory: string;
+      nagiUserHistoryY: string;
       langBreakdown: string;
+      langCount: string;
       langOther: string;
+      empty: string;
     };
-    topPost: { heading: string; commentLabel: string; empty: string; error: string };
+    topPost: {
+      heading: string;
+      commentLabel: string;
+      empty: string;
+      error: string;
+      networkLabels: { bsky: string; nagi: string };
+    };
     offline: string;
+    health: {
+      heading: string;
+      tiles: Record<HealthTileId, string>;
+      states: Record<HealthState, string>;
+      detailLabel: string;
+      lastOkLabel: string;
+    };
+    timeline: {
+      heading: string;
+      energyLabel: string;
+      nowLabel: string;
+      empty: string;
+      error: string;
+      previousDay: string;
+      nextDay: string;
+      today: string;
+      segmentAria: string;
+      tableLabel: string;
+      tableHeaders: { time: string; status: string; mood: string; energy: string };
+      eventLabels: Record<string, string>;
+    };
+    statusLabels: Record<BotStatusName, string>;
+    energyAria: string;
+    totalSuffix: string;
+    tokens: {
+      status: Record<BotStatusName, string>;
+      statusEmoji: Record<BotStatusName, string>;
+      network: { bsky: string; nagi: string };
+      healthState: Record<HealthState, string>;
+      eventEmoji: Record<string, string>;
+    };
   }
 
   const stringsEl = document.getElementById('dashboard-strings');
   if (stringsEl?.textContent) {
-    const strings: RuntimeStrings = JSON.parse(stringsEl.textContent);
-    start(strings);
+    start(JSON.parse(stringsEl.textContent) as RuntimeStrings);
   }
 
   function start(strings: RuntimeStrings) {
@@ -145,6 +263,16 @@ const runtimeStrings = {
     const fmt = (value: number | undefined): string =>
       typeof value === 'number' && Number.isFinite(value) ? numberFormat.format(value) : '---';
 
+    /** Fills `{name}` placeholders in a dictionary string. */
+    const template = (text: string, values: Record<string, string | number>): string =>
+      text.replace(/\{(\w+)\}/g, (match, key) =>
+        key in values ? String(values[key]) : match,
+      );
+
+    const INK = '#3d3733';
+    const MUTED_INK = '#a9a096';
+    const GRID_COLOR = 'rgba(61, 55, 51, 0.14)';
+
     // ---------------------------------------------------------- JST clock --
     const clockFormat = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Tokyo',
@@ -157,6 +285,13 @@ const runtimeStrings = {
     const tickClock = () => setText('jst-clock', clockFormat.format(new Date()));
     tickClock();
     setInterval(tickClock, 1000);
+
+    const hhmm = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Tokyo',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
 
     // --------------------------------------------------- connection state --
     let hasEverConnected = false;
@@ -173,21 +308,71 @@ const runtimeStrings = {
       if (offline) offline.hidden = hasEverConnected || state === 'connecting';
     };
 
+    // ------------------------------------------------------------ health --
+    const HEALTH_TILES: HealthTileId[] = ['jetstream', 'botServer', 'localLlm', 'gemini'];
+
+    const renderHealth = (health: HealthSnapshot | null | undefined) => {
+      for (const id of HEALTH_TILES) {
+        const tile = health?.[id];
+        const state: HealthState = tile?.state ?? 'unknown';
+
+        const el = $(`health-${id}`);
+        if (el) {
+          el.dataset.state = state;
+          el.style.setProperty('--state-color', strings.tokens.healthState[state]);
+        }
+        setText(`health-${id}-state`, strings.health.states[state]);
+
+        // The breakdown is built with the DOM API: probe names and error text
+        // come off the wire and must never be interpreted as markup.
+        const parts = $(`health-${id}-parts`);
+        if (!parts) continue;
+        parts.replaceChildren();
+
+        for (const part of tile?.parts ?? []) {
+          const li = document.createElement('li');
+
+          const name = document.createElement('span');
+          name.className = 'part__name';
+          name.textContent = part.name;
+
+          const partState = document.createElement('span');
+          partState.className = 'part__state';
+          partState.textContent = strings.health.states[part.state] ?? part.state;
+          partState.style.color = strings.tokens.healthState[part.state] ?? MUTED_INK;
+
+          li.append(name, partState);
+
+          if (part.lastOkAt) {
+            const seen = document.createElement('span');
+            seen.className = 'part__seen';
+            seen.textContent = `${strings.health.lastOkLabel} ${hhmm.format(new Date(part.lastOkAt))}`;
+            li.append(seen);
+          }
+
+          if (part.lastError) {
+            const error = document.createElement('span');
+            error.className = 'part__error';
+            error.textContent = part.lastError;
+            li.append(error);
+          }
+
+          parts.append(li);
+        }
+      }
+    };
+
     // ------------------------------------------------------------ charts ---
     // Chart.js is ~70KB gzipped; it only loads once the dashboard is on screen.
     type ChartModule = typeof import('chart.js');
     let chartLib: { Chart: ChartModule['Chart'] } | null = null;
     let followerChart: InstanceType<ChartModule['Chart']> | null = null;
+    let nagiUserChart: InstanceType<ChartModule['Chart']> | null = null;
     let langChart: InstanceType<ChartModule['Chart']> | null = null;
     // Status frames can arrive before the dashboard is scrolled into view, so
     // language data waits here until Chart.js has actually been loaded.
     let pendingLang: [string, number][] | null = null;
     let chartsVisible = false;
-
-    const ink = '#3d3733';
-    const gridColor = 'rgba(59, 126, 161, 0.18)';
-    const palette = ['#3b7ea1', '#7fd4e8', '#4c6fe7', '#f2a0bc', '#f5a25d', '#9bc78a', '#c8a2e0'];
-    const otherColor = '#c3bbb0';
 
     async function loadCharts() {
       if (chartLib) return chartLib;
@@ -195,91 +380,123 @@ const runtimeStrings = {
       const [
         {
           Chart,
+          BarController,
+          BarElement,
+          CategoryScale,
           LineController,
           LineElement,
           PointElement,
           LinearScale,
           TimeScale,
-          PieController,
-          ArcElement,
           Tooltip,
-          Legend,
           Filler,
         },
       ] = await Promise.all([import('chart.js'), import('chartjs-adapter-date-fns')]);
 
       Chart.register(
+        BarController,
+        BarElement,
+        CategoryScale,
         LineController,
         LineElement,
         PointElement,
         LinearScale,
         TimeScale,
-        PieController,
-        ArcElement,
         Tooltip,
-        Legend,
         Filler,
       );
 
       Chart.defaults.font.family = "'Zen Kurenaido', sans-serif";
-      Chart.defaults.color = ink;
+      Chart.defaults.color = INK;
+      // The crosshair finds the X, so the pointer never has to land on the line.
+      Chart.defaults.interaction.mode = 'index';
+      Chart.defaults.interaction.intersect = false;
 
       chartLib = { Chart };
       return chartLib;
     }
 
-    async function renderFollowerChart() {
-      const canvas = document.getElementById('follower-chart') as HTMLCanvasElement | null;
-      if (!canvas) return;
+    /** Shared options for the two single-series trend charts. */
+    const trendOptions = (yTitle: string, xTitle: string) => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      // One series, so the title already says what is plotted — a legend box
+      // with a single swatch would just restate it.
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          type: 'time' as const,
+          time: {
+            unit: 'day' as const,
+            tooltipFormat: 'yyyy/MM/dd',
+            displayFormats: { day: 'MM/dd' },
+          },
+          title: { display: true, text: xTitle },
+          grid: { color: GRID_COLOR },
+          border: { color: GRID_COLOR },
+        },
+        y: {
+          title: { display: true, text: yTitle },
+          grid: { color: GRID_COLOR },
+          border: { color: GRID_COLOR },
+          ticks: { callback: (value: unknown) => numberFormat.format(Number(value)) },
+        },
+      },
+    });
 
-      const history = await fetchFollowerHistory();
-      if (history.length === 0) return;
+    const trendDataset = (
+      label: string,
+      points: { date: string; count: number }[],
+      color: string,
+    ) => ({
+      labels: points.map((p) => p.date),
+      datasets: [
+        {
+          label,
+          data: points.map((p) => p.count),
+          borderColor: color,
+          // A wash, never a saturated block.
+          backgroundColor: `color-mix(in srgb, ${color} 12%, transparent)`,
+          borderWidth: 2,
+          tension: 0.25,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          fill: true,
+        },
+      ],
+    });
+
+    async function renderFollowerChart(points: { date: string; count: number }[]) {
+      const canvas = document.getElementById('follower-chart') as HTMLCanvasElement | null;
+      if (!canvas || points.length === 0) return;
 
       const { Chart } = await loadCharts();
-
       followerChart?.destroy();
       followerChart = new Chart(canvas, {
         type: 'line',
-        data: {
-          labels: history.map((p) => p.date),
-          datasets: [
-            {
-              label: strings.charts.followerHistoryY,
-              data: history.map((p) => p.count),
-              borderColor: '#3b7ea1',
-              backgroundColor: 'rgba(127, 212, 232, 0.25)',
-              borderWidth: 2,
-              tension: 0.25,
-              pointRadius: 0,
-              pointHoverRadius: 4,
-              fill: true,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: {
-              type: 'time',
-              time: { unit: 'day', tooltipFormat: 'yyyy/MM/dd', displayFormats: { day: 'MM/dd' } },
-              title: { display: true, text: strings.charts.followerHistoryX },
-              grid: { color: gridColor },
-            },
-            y: {
-              title: { display: true, text: strings.charts.followerHistoryY },
-              grid: { color: gridColor },
-            },
-          },
-        },
+        data: trendDataset(strings.charts.followerHistoryY, points, strings.tokens.network.bsky),
+        options: trendOptions(strings.charts.followerHistoryY, strings.charts.followerHistoryX),
+      });
+    }
+
+    async function renderNagiUserChart(points: { date: string; count: number }[]) {
+      const canvas = document.getElementById('nagi-user-chart') as HTMLCanvasElement | null;
+      if (!canvas || points.length === 0) return;
+
+      const { Chart } = await loadCharts();
+      nagiUserChart?.destroy();
+      nagiUserChart = new Chart(canvas, {
+        type: 'line',
+        data: trendDataset(strings.charts.nagiUserHistoryY, points, strings.tokens.network.nagi),
+        options: trendOptions(strings.charts.nagiUserHistoryY, strings.charts.followerHistoryX),
       });
     }
 
     /**
-     * Bot-tan's followers span ~30 languages, almost all of them a fraction of a
-     * percent. Charting every one buries the pie under its own legend, so the
-     * long tail is rolled into a single slice.
+     * Bot-tan's followers span ~30 languages, almost all of them a fraction of
+     * a percent. This used to be a pie, which buried the answer under its own
+     * legend — a ranked bar reads the comparison directly, and one hue is
+     * enough because the bar length already carries the value.
      */
     const LANG_SLICES = 7;
 
@@ -309,27 +526,332 @@ const runtimeStrings = {
       }
 
       langChart = new Chart(canvas, {
-        type: 'pie',
+        type: 'bar',
         data: {
           labels,
           datasets: [
             {
+              label: strings.charts.langCount,
               data: values,
-              backgroundColor: labels.map((label, i) =>
-                label === strings.charts.langOther ? otherColor : palette[i % palette.length],
-              ),
-              borderColor: '#fdf8ef',
-              borderWidth: 2,
+              backgroundColor: strings.tokens.network.bsky,
+              borderRadius: 4,
+              // Cap the bar thickness so the band keeps some air.
+              maxBarThickness: 18,
             },
           ],
         },
         options: {
+          indexAxis: 'y',
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 10 } } },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { color: GRID_COLOR },
+              border: { color: GRID_COLOR },
+              ticks: { callback: (value: unknown) => numberFormat.format(Number(value)) },
+            },
+            y: { grid: { display: false }, border: { color: GRID_COLOR } },
+          },
         },
       });
     }
+
+    // -------------------------------------------------------- sparklines ---
+    /**
+     * Draws a 30-day trend inside a stat tile. The tail is de-emphasised and
+     * only the latest point wears the series colour, so the eye lands on "now".
+     */
+    const drawSparkline = (id: string, values: number[], color: string) => {
+      const svg = $(`${id}-spark`);
+      if (!(svg instanceof SVGSVGElement)) return;
+
+      const spark = sketchSparkline(values, { seed: id });
+      svg.replaceChildren();
+      if (!spark) return;
+
+      svg.setAttribute('viewBox', spark.viewBox);
+
+      const ns = 'http://www.w3.org/2000/svg';
+      const area = document.createElementNS(ns, 'path');
+      area.setAttribute('d', spark.area);
+      area.setAttribute('fill', color);
+      area.setAttribute('opacity', '0.1');
+
+      const line = document.createElementNS(ns, 'path');
+      line.setAttribute('d', spark.d);
+      line.setAttribute('fill', 'none');
+      line.setAttribute('stroke', MUTED_INK);
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('stroke-linecap', 'round');
+      line.setAttribute('stroke-linejoin', 'round');
+      line.setAttribute('vector-effect', 'non-scaling-stroke');
+
+      const dot = document.createElementNS(ns, 'circle');
+      dot.setAttribute('cx', String(spark.last.x));
+      dot.setAttribute('cy', String(spark.last.y));
+      dot.setAttribute('r', '2.5');
+      dot.setAttribute('fill', color);
+      // A ring in the surface colour keeps the dot legible where it meets the line.
+      dot.setAttribute('stroke', '#fdf8ef');
+      dot.setAttribute('stroke-width', '1.5');
+
+      svg.append(area, line, dot);
+    };
+
+    const SPARK_SERIES: { id: string; group: 'bsky' | 'nagi' | 'common'; key: string; color: string }[] = [
+      { id: 'bsky-followers', group: 'bsky', key: 'currentFollowers', color: strings.tokens.network.bsky },
+      { id: 'bsky-new-followers', group: 'bsky', key: 'followers', color: strings.tokens.network.bsky },
+      { id: 'bsky-likes', group: 'bsky', key: 'likes', color: strings.tokens.network.bsky },
+      { id: 'bsky-affirmations', group: 'bsky', key: 'affirmations', color: strings.tokens.network.bsky },
+      { id: 'bsky-affirmed-users', group: 'bsky', key: 'affirmedUsers', color: strings.tokens.network.bsky },
+      { id: 'nagi-users', group: 'nagi', key: 'totalUsers', color: strings.tokens.network.nagi },
+      { id: 'nagi-reactions', group: 'nagi', key: 'reactions', color: strings.tokens.network.nagi },
+      { id: 'nagi-affirmations', group: 'nagi', key: 'affirmations', color: strings.tokens.network.nagi },
+      { id: 'nagi-affirmed-users', group: 'nagi', key: 'affirmedUsers', color: strings.tokens.network.nagi },
+      { id: 'nagi-analyses', group: 'nagi', key: 'analyses', color: strings.tokens.network.nagi },
+      { id: 'ai-requests', group: 'common', key: 'aiRequests', color: 'var(--color-sky-deep)' },
+      { id: 'ai-error-rate', group: 'common', key: 'aiErrorRate', color: 'var(--color-sky-deep)' },
+    ];
+
+    const SPARK_DAYS = 30;
+
+    const renderSparklines = (history: HistoryPayload) => {
+      for (const series of SPARK_SERIES) {
+        const values = history.daily
+          .map((point) => point.metrics?.[series.group]?.[series.key])
+          .filter((value): value is number => typeof value === 'number')
+          .slice(-SPARK_DAYS);
+
+        // Fewer than two points is not a trend; leave the tile without one.
+        if (values.length >= 2) {
+          drawSparkline(series.id, values, series.color);
+        }
+      }
+
+      // Nagi user history is reconstructed from profile creation dates, so it
+      // reaches back further than the nightly snapshots do.
+      const nagiUsers = history.nagiUsers.map((point) => point.count).slice(-SPARK_DAYS);
+      if (nagiUsers.length >= 2) {
+        drawSparkline('nagi-users', nagiUsers, strings.tokens.network.nagi);
+      }
+    };
+
+    // ---------------------------------------------------------- timeline ---
+    /** JST calendar date, independent of where the reader is. */
+    const jstDate = (date = new Date()): string => {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(date);
+      return parts;
+    };
+
+    /** The server refuses anything older than a week. */
+    const TIMELINE_MAX_DAYS_BACK = 6;
+    let timelineOffset = 0;
+    let timelineBusy = false;
+
+    const shiftDate = (days: number): string => {
+      const base = new Date(`${jstDate()}T00:00:00+09:00`);
+      base.setDate(base.getDate() + days);
+      return jstDate(base);
+    };
+
+    const renderTimeline = (payload: TimelinePayload | null) => {
+      const band = $('timeline-band');
+      const events = $('timeline-events');
+      const tableBody = $('timeline-table-body');
+      const status = $('timeline-status');
+      const energySvg = $('timeline-energy');
+      if (!band || !events || !tableBody || !status || !(energySvg instanceof SVGSVGElement)) return;
+
+      band.replaceChildren();
+      events.replaceChildren();
+      tableBody.replaceChildren();
+      energySvg.replaceChildren();
+
+      if (!payload) {
+        status.hidden = false;
+        status.textContent = strings.timeline.error;
+        return;
+      }
+
+      if (payload.segments.length === 0) {
+        status.hidden = false;
+        status.textContent = strings.timeline.empty;
+        return;
+      }
+
+      status.hidden = true;
+
+      const dayStart = new Date(`${payload.date}T00:00:00+09:00`).getTime();
+      const DAY_MS = 24 * 60 * 60 * 1000;
+      const asFraction = (iso: string) => (new Date(iso).getTime() - dayStart) / DAY_MS;
+
+      const last = payload.segments[payload.segments.length - 1]!;
+
+      for (const segment of payload.segments) {
+        const startMs = new Date(segment.start).getTime();
+        const endMs = new Date(segment.end).getTime();
+        const minutes = Math.max(1, (endMs - startMs) / 60000);
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'seg';
+        button.setAttribute('role', 'listitem');
+        // Width tracks duration, so the band is a true time axis.
+        button.style.flexGrow = String(minutes);
+        button.style.flexBasis = '0';
+        button.style.setProperty('--seg-color', strings.tokens.status[segment.status]);
+        if (segment === last) button.dataset.active = 'true';
+
+        const range = `${hhmm.format(new Date(segment.start))}–${hhmm.format(new Date(segment.end))}`;
+        const statusLabel = strings.statusLabels[segment.status] ?? segment.status;
+
+        // The glyph is the second identity channel: the band never relies on
+        // colour alone. Hidden on very short segments where it cannot fit.
+        const emoji = document.createElement('span');
+        emoji.textContent = minutes >= 45 ? (strings.tokens.statusEmoji[segment.status] ?? '') : '';
+        emoji.setAttribute('aria-hidden', 'true');
+        button.append(emoji);
+
+        button.setAttribute(
+          'aria-label',
+          template(strings.timeline.segmentAria, {
+            time: range,
+            status: statusLabel,
+            energy: segment.energy,
+          }),
+        );
+
+        const show = () => showTip(range, statusLabel, segment.mood, segment.moodEn, segment.energy);
+        button.addEventListener('pointerenter', show);
+        button.addEventListener('focus', show);
+        band.append(button);
+
+        // The table twin: everything the tooltip shows, without hovering.
+        const row = document.createElement('tr');
+        for (const [value, className] of [
+          [range, 'cell--time'],
+          [statusLabel, 'cell--status'],
+          [moodText(segment.mood, segment.moodEn), 'cell--mood'],
+          [`${segment.energy}%`, 'cell--energy'],
+        ] as const) {
+          const cell = document.createElement('td');
+          cell.className = className;
+          cell.textContent = value;
+          row.append(cell);
+        }
+        tableBody.append(row);
+      }
+
+      // Event markers, positioned on the same x scale as the band.
+      for (const event of payload.events) {
+        const at = asFraction(event.at);
+        if (at < 0 || at > 1) continue;
+
+        const marker = document.createElement('span');
+        marker.className = 'event';
+        marker.style.setProperty('--at', `${at * 100}%`);
+        marker.textContent = strings.tokens.eventEmoji[event.type] ?? '•';
+        marker.title = strings.timeline.eventLabels[event.type] ?? event.type;
+        events.append(marker);
+      }
+
+      // Energy line, sharing the band's x scale so the two read as one picture.
+      const energyPoints = payload.segments.map((segment) => segment.energy);
+      const spark = sketchSparkline(energyPoints, { seed: `energy-${payload.date}`, height: 24 });
+      if (spark) {
+        const ns = 'http://www.w3.org/2000/svg';
+        const path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', spark.d);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', MUTED_INK);
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        path.setAttribute('vector-effect', 'non-scaling-stroke');
+        energySvg.append(path);
+      }
+    };
+
+    const moodText = (mood: string, moodEn: string): string =>
+      (strings.useEnglishMood ? moodEn || mood : mood) || '---';
+
+    const showTip = (
+      range: string,
+      statusLabel: string,
+      mood: string,
+      moodEn: string,
+      energy: number,
+    ) => {
+      const tip = $('timeline-tip');
+      if (!tip) return;
+
+      tip.hidden = false;
+      tip.replaceChildren();
+
+      const head = document.createElement('div');
+      // Value leads, label follows — the reader already knows which segment.
+      const time = document.createElement('span');
+      time.className = 'tip__time';
+      time.textContent = range;
+      const label = document.createElement('span');
+      label.className = 'tip__status';
+      label.textContent = ` ${statusLabel} · ${energy}%`;
+      head.append(time, label);
+
+      const body = document.createElement('p');
+      body.className = 'tip__mood';
+      body.textContent = moodText(mood, moodEn);
+
+      tip.append(head, body);
+    };
+
+    const loadTimeline = async () => {
+      if (timelineBusy) return;
+      timelineBusy = true;
+
+      const plot = $('timeline-plot');
+      // Hold the previous render at reduced opacity rather than flashing a
+      // skeleton — no layout jump while the next day loads.
+      plot?.style.setProperty('opacity', '0.5');
+
+      const date = shiftDate(-timelineOffset);
+      // The "today" marker is a full template, not a suffix: Japanese wraps it
+      // in full-width brackets and English in spaced parentheses.
+      setText(
+        'timeline-date',
+        timelineOffset === 0 ? template(strings.timeline.today, { date }) : date,
+      );
+
+      const prev = $('timeline-prev') as HTMLButtonElement | null;
+      const next = $('timeline-next') as HTMLButtonElement | null;
+      if (prev) prev.disabled = timelineOffset >= TIMELINE_MAX_DAYS_BACK;
+      if (next) next.disabled = timelineOffset <= 0;
+
+      renderTimeline(await fetchTimeline(date));
+
+      plot?.style.removeProperty('opacity');
+      timelineBusy = false;
+    };
+
+    $('timeline-prev')?.addEventListener('click', () => {
+      if (timelineOffset < TIMELINE_MAX_DAYS_BACK) {
+        timelineOffset += 1;
+        void loadTimeline();
+      }
+    });
+
+    $('timeline-next')?.addEventListener('click', () => {
+      if (timelineOffset > 0) {
+        timelineOffset -= 1;
+        void loadTimeline();
+      }
+    });
 
     // ------------------------------------------------------ status frames --
     let lastTopPostUri: string | null = null;
@@ -340,16 +862,9 @@ const runtimeStrings = {
       setText('mood-text', mood || '---');
 
       // Zero-padded HH:mm — seconds add noise to a "next action" time.
-      const nextStepFormat = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Asia/Tokyo',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      });
-
       setText(
         'next-step-time',
-        data.nextStepTime ? nextStepFormat.format(new Date(data.nextStepTime)) : '---',
+        data.nextStepTime ? hhmm.format(new Date(data.nextStepTime)) : '---',
       );
 
       // --- utility scores, and which state is currently active ---
@@ -362,97 +877,111 @@ const runtimeStrings = {
         if (tile) tile.dataset.active = String(data.status === status);
       }
 
-      // --- ability score, derived exactly as the original dashboard did ---
-      const total = data.totalStats;
-      if (total) {
-        const level = Math.floor((total.followers ?? 0) / 100) + 1;
-        setText('ability-level', String(level));
-        setText('ability-affirmation', fmt(Math.floor((total.affirmationCount ?? 0) / 1000)));
-        setText('ability-bsky-love', fmt(Math.floor((total.likes ?? 0) / 1000)));
-        setText('ability-talk', fmt(Math.floor((total.reply ?? 0) / 100)));
-        setText('ability-intelligence', fmt(total.analysis));
-        setText('ability-luck', fmt(total.fortune));
-        setText('ability-spread', fmt(total.cheer));
-        setText('ability-party', fmt(total.dj));
-        setText('ability-magic', fmt(Math.floor((total.anniversary ?? 0) / 1000)));
-      }
-
       // --- energy meter ---
       if (typeof data.energy === 'number') {
-        const energy = data.energy;
+        const energy = Math.max(0, Math.min(100, data.energy));
         setText('ability-energy', `${energy.toFixed(1)}%`);
 
-        const active = Math.round(energy / 5);
-        const lit = energy >= 60 ? '#66ff66' : '#ff6666';
-        document.querySelectorAll<HTMLElement>('.meter__seg').forEach((seg, i) => {
-          seg.style.background = i < active ? lit : '#2a2f3a';
-        });
+        const fill = $('energy-fill');
+        if (fill) {
+          fill.style.setProperty('--level', `${energy}%`);
+          // The fill carries severity; the track behind it stays the same ramp.
+          fill.style.setProperty(
+            '--meter-color',
+            energy >= 60
+              ? strings.tokens.healthState.ok
+              : energy >= 25
+                ? strings.tokens.healthState.stale
+                : strings.tokens.healthState.down,
+          );
+        }
+
+        const meter = $('energy-meter');
+        if (meter) {
+          meter.setAttribute('aria-valuenow', energy.toFixed(0));
+          meter.setAttribute(
+            'aria-valuetext',
+            template(strings.energyAria, { value: energy.toFixed(0) }),
+          );
+        }
       }
 
-      // --- daily stats ---
+      renderHealth(data.health);
+
+      // --- Bluesky ---
       const daily = data.dailyStats;
+      setText('bsky-followers', fmt(data.bsky?.currentFollowers));
+
       if (daily) {
-        setText('stat-followers', fmt(daily.followers));
-        setText('stat-likes', fmt(daily.likes));
-        setText('stat-affirmation', fmt(daily.affirmationCount));
-        setText('stat-unique-users', fmt(daily.uniqueAffirmationUserCount));
-        setText('stat-fortune', fmt(daily.fortune));
-        setText('stat-cheer', fmt(daily.cheer));
-        setText('stat-analysis', fmt(daily.analysis));
-        setText('stat-dj', fmt(daily.dj));
-        setText('stat-anniversary', fmt(daily.anniversary));
-        setText('stat-answer', fmt(daily.answer));
-        setText('stat-rpd', fmt(daily.rpd));
+        setText('bsky-new-followers', fmt(daily.followers));
+        setText('bsky-likes', fmt(daily.likes));
+        setText('bsky-affirmations', fmt(daily.affirmationCount));
+        setText('bsky-affirmed-users', fmt(daily.uniqueAffirmationUserCount));
+        setText('bsky-fortune', fmt(daily.fortune));
+        setText('bsky-cheer', fmt(daily.cheer));
+        setText('bsky-analysis', fmt(daily.analysis));
+        setText('bsky-dj', fmt(daily.dj));
+        setText('bsky-anniversary', fmt(daily.anniversary));
+        setText('bsky-answer', fmt(daily.answer));
+        setText('bsky-rate', fmt(daily.bskyrate));
+
+        setText('ai-requests', fmt(daily.rpd));
 
         // AI error rate, as a share of all requests made today.
         const totalRequests = (daily.rpd ?? 0) + (daily.rpdError ?? 0);
         const errorRate = totalRequests > 0 ? ((daily.rpdError ?? 0) / totalRequests) * 100 : 0;
-        setText('stat-ai-error-rate', `${errorRate.toFixed(1)}%`);
-
-        // Rates are counts divided by how long the current window has been open.
-        const elapsedSeconds = daily.lastInitializedDate
-          ? (Date.now() - new Date(daily.lastInitializedDate).getTime()) / 1000
-          : 0;
-
-        if (elapsedSeconds > 0) {
-          setText('stat-likes-speed', (((daily.likes ?? 0) / elapsedSeconds) * 60).toFixed(1));
-          setText(
-            'stat-affirmation-speed',
-            (((daily.affirmationCount ?? 0) / elapsedSeconds) * 60).toFixed(1),
-          );
-          setText('stat-bskyrate', (((daily.bskyrate ?? 0) / elapsedSeconds) * 3600).toFixed(1));
-        } else {
-          setText('stat-likes-speed', '---');
-          setText('stat-affirmation-speed', '---');
-          setText('stat-bskyrate', '---');
-        }
-
-        setText('daily-comment', daily.botComment || '---');
+        setText('ai-error-rate', errorRate.toFixed(1));
 
         if (daily.lang?.length) {
           if (chartsVisible) void renderLangChart(daily.lang);
           else pendingLang = daily.lang;
         }
+      }
 
-        if (daily.topPost && daily.topPost !== lastTopPostUri) {
-          lastTopPostUri = daily.topPost;
-          void renderTopPost(daily.topPost);
-        }
+      // --- Nagi ---
+      const nagi = data.nagi;
+      if (nagi) {
+        const pair = (id: string, value: { today?: number; total?: number } | undefined) => {
+          setText(id, fmt(value?.today));
+          setText(`${id}-note`, template(strings.totalSuffix, { value: fmt(value?.total) }));
+        };
+
+        setText('nagi-users', fmt(nagi.totalUsers));
+        pair('nagi-reactions', nagi.reactions);
+        pair('nagi-affirmations', nagi.affirmations);
+        pair('nagi-affirmed-users', nagi.affirmedUsers);
+        pair('nagi-analyses', nagi.analyses);
+      }
+
+      // --- today's pick ---
+      setText('daily-comment', data.topPost?.comment || daily?.botComment || '---');
+
+      const topPost = data.topPost;
+      if (topPost?.uri && topPost.uri !== lastTopPostUri) {
+        lastTopPostUri = topPost.uri;
+        void renderTopPost(topPost);
       }
     };
 
     // --------------------------------------------------- recommended post --
-    async function renderTopPost(uri: string) {
+    async function renderTopPost(payload: TopPostPayload) {
       const container = $('top-post');
       if (!container) return;
 
-      const post = await fetchPost(uri);
+      const network = payload.network === 'nagi' ? 'nagi' : 'bsky';
+      const badge = $('top-post-network');
+      if (badge) {
+        badge.hidden = false;
+        badge.textContent = strings.topPost.networkLabels[network];
+        badge.style.setProperty('--badge', strings.tokens.network[network]);
+      }
+
+      const post = await resolveTopPost(payload);
       if (!post) {
-        container.innerHTML = '';
         const p = document.createElement('p');
-        p.className = 'dash__post-empty';
+        p.className = 'top__empty';
         p.textContent = strings.topPost.error;
-        container.append(p);
+        container.replaceChildren(p);
         return;
       }
 
@@ -501,8 +1030,9 @@ const runtimeStrings = {
 
     // ------------------------------------------------------------- start ---
     connectBotStatus({ onMessage, onStateChange });
+    void loadTimeline();
 
-    // Defer the follower chart until the dashboard is actually looked at.
+    // Defer the heavy charts until the dashboard is actually looked at.
     const dashboardEl = document.getElementById('dashboard');
 
     if (dashboardEl) {
@@ -511,7 +1041,17 @@ const runtimeStrings = {
           if (!entries.some((e) => e.isIntersecting)) return;
           observer.disconnect();
           chartsVisible = true;
-          void renderFollowerChart();
+
+          void (async () => {
+            const [followers, history] = await Promise.all([
+              fetchFollowerHistory(),
+              fetchHistory(90),
+            ]);
+            void renderFollowerChart(followers);
+            void renderNagiUserChart(history.nagiUsers);
+            renderSparklines(history);
+          })();
+
           if (pendingLang) {
             void renderLangChart(pendingLang);
             pendingLang = null;
@@ -527,7 +1067,7 @@ const runtimeStrings = {
 <style>
   .dash {
     display: grid;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
   .dash__bar {
@@ -601,11 +1141,24 @@ const runtimeStrings = {
     font-size: 0.88rem;
   }
 
+  .dash__rule {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-top: 1.5px dashed color-mix(in srgb, var(--color-sky-deep) 22%, transparent);
+  }
+
   .dash__heading {
-    margin: 0.5rem 0 -0.5rem;
+    margin: 0 0 -0.5rem;
     font-family: var(--font-hand);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--color-sky-deep);
+  }
+
+  .dash__common {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
   }
 
   .dash__tiles {
@@ -614,85 +1167,21 @@ const runtimeStrings = {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
   }
 
-  .dash__charts {
+  /*
+   * Bluesky and Nagi side by side so the two can be compared at a glance. The
+   * columns carry a lot of tiles, so they only split once there is real room
+   * for two of them; below that they stack.
+   */
+  .dash__networks {
     display: grid;
     gap: 1rem;
     grid-template-columns: 1fr;
   }
 
-  @media (min-width: 820px) {
-    .dash__charts {
-      grid-template-columns: 1.35fr 1fr;
+  @media (min-width: 900px) {
+    .dash__networks {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
     }
-  }
-
-  .dash__post-empty {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-ink-soft);
-  }
-
-  .dash__comment {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    font-size: 0.9rem;
-  }
-
-  .dash__comment-label {
-    font-family: var(--font-hand);
-    color: var(--color-ink-soft);
-  }
-
-  /* Styles for the post card injected by the script above. */
-  .dash :global(.post) {
-    display: grid;
-    gap: 0.5rem;
-    padding: 0.9rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    color: var(--color-ink);
-    background: color-mix(in srgb, var(--color-paper) 90%, transparent);
-    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
-    transition: translate 180ms ease, border-color 180ms ease;
-  }
-
-  .dash :global(.post:hover) {
-    translate: 0 -3px;
-    border-color: var(--color-sky-deep);
-  }
-
-  .dash :global(.post__head) {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .dash :global(.post__avatar) {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-
-  .dash :global(.post__handle) {
-    font-size: 0.82rem;
-    color: var(--color-ink-soft);
-  }
-
-  .dash :global(.post__text) {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.8;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-
-  .dash :global(.post__time) {
-    font-size: 0.75rem;
-    color: var(--color-ink-soft);
-    justify-self: end;
-    font-variant-numeric: tabular-nums;
   }
 </style>

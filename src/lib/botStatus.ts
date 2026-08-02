@@ -42,6 +42,42 @@ export interface TotalStats {
   anniversary?: number;
 }
 
+/** Bot-tan's activity on Nagi. Counted straight out of the `nagi` schema. */
+export interface NagiStatPair {
+  today?: number;
+  total?: number;
+}
+
+export interface NagiStats {
+  totalUsers?: number;
+  reactions?: NagiStatPair;
+  affirmations?: NagiStatPair;
+  affirmedUsers?: NagiStatPair;
+  analyses?: NagiStatPair;
+}
+
+export type HealthState = 'ok' | 'stale' | 'down' | 'unknown' | 'unconfigured';
+
+/** One probe inside a tile — e.g. the Bluesky half of "Jetstream". */
+export interface HealthPart {
+  name: string;
+  state: HealthState;
+  lastOkAt?: string;
+  lastError?: string;
+}
+
+export interface HealthTileStatus {
+  state: HealthState;
+  parts?: HealthPart[];
+}
+
+/** The four tiles the dashboard shows, each an aggregate of its parts. */
+export type HealthTileId = 'jetstream' | 'botServer' | 'localLlm' | 'gemini';
+
+export type HealthSnapshot = Partial<Record<HealthTileId, HealthTileStatus>> & {
+  checkedAt?: string;
+};
+
 export interface BotStatusPayload {
   /** 0-100. */
   energy?: number;
@@ -52,6 +88,28 @@ export interface BotStatusPayload {
   utilities?: Partial<Record<BotStatusName, number>>;
   dailyStats?: DailyStats;
   totalStats?: TotalStats;
+  bsky?: { currentFollowers?: number };
+  nagi?: NagiStats;
+  health?: HealthSnapshot | null;
+  topPost?: TopPostPayload | null;
+}
+
+/**
+ * Today's pick. Bluesky posts arrive as a bare AT URI and are resolved against
+ * the public AppView; Nagi posts cannot be, so the server sends the fields
+ * needed to render them.
+ */
+export interface TopPostPayload {
+  uri: string;
+  comment?: string;
+  network?: 'bsky' | 'nagi';
+  text?: string;
+  createdAt?: string;
+  authorHandle?: string;
+  authorDisplayName?: string;
+  authorAvatarCid?: string;
+  authorDid?: string;
+  rkey?: string;
 }
 
 export interface FollowerPoint {
@@ -63,6 +121,16 @@ const WS_URL = import.meta.env.PUBLIC_BOT_WS_URL ?? 'wss://bot-tan.suibari.com/w
 const FOLLOWER_API_URL =
   import.meta.env.PUBLIC_FOLLOWER_API_URL ??
   'https://bottan-measurement-worker.404-not-found-address.workers.dev/';
+
+/**
+ * Trends and the activity timeline are pulled over plain HTTP rather than the
+ * socket: they are historical, so re-sending them on every status frame would
+ * make each frame many times larger for data that changes once a day.
+ */
+const HISTORY_API_URL =
+  import.meta.env.PUBLIC_HISTORY_API_URL ?? 'https://bot-tan.suibari.com/history';
+const TIMELINE_API_URL =
+  import.meta.env.PUBLIC_TIMELINE_API_URL ?? 'https://bot-tan.suibari.com/timeline';
 
 /** In dev the biorhythm server usually runs locally without TLS. */
 function resolveWsUrl(): string {
@@ -155,12 +223,124 @@ export async function fetchFollowerHistory(): Promise<FollowerPoint[]> {
   }
 }
 
+/** One day's frozen counters, as stored by the nightly snapshot. */
+export interface DailyMetricPoint {
+  date: string;
+  metrics?: {
+    bsky?: Record<string, number>;
+    nagi?: Record<string, number>;
+    common?: Record<string, number>;
+  };
+}
+
+export interface HistoryPayload {
+  daily: DailyMetricPoint[];
+  /** Nagi user counts, reconstructed from profile creation dates. */
+  nagiUsers: { date: string; count: number }[];
+}
+
+/** Trend data for the sparklines and the two history charts. */
+export async function fetchHistory(days = 90): Promise<HistoryPayload> {
+  try {
+    const endpoint = new URL(HISTORY_API_URL);
+    endpoint.searchParams.set('days', String(days));
+
+    const response = await fetch(endpoint);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = (await response.json()) as Partial<HistoryPayload>;
+    return {
+      daily: Array.isArray(data.daily) ? data.daily : [],
+      nagiUsers: Array.isArray(data.nagiUsers) ? data.nagiUsers : [],
+    };
+  } catch (error) {
+    console.error('Failed to fetch history:', error);
+    return { daily: [], nagiUsers: [] };
+  }
+}
+
+/** One stretch of the day Bot-tan spent in a single state. */
+export interface TimelineSegment {
+  start: string;
+  end: string;
+  status: BotStatusName;
+  mood: string;
+  moodEn: string;
+  energy: number;
+}
+
+export interface TimelineEvent {
+  at: string;
+  type: string;
+}
+
+export interface TimelinePayload {
+  date: string;
+  segments: TimelineSegment[];
+  events: TimelineEvent[];
+}
+
+/**
+ * A single day of activity. `date` is a JST `YYYY-MM-DD`; the server refuses
+ * anything older than a week, so the pager must not offer more than that.
+ */
+export async function fetchTimeline(date?: string): Promise<TimelinePayload | null> {
+  try {
+    const endpoint = new URL(TIMELINE_API_URL);
+    if (date) endpoint.searchParams.set('date', date);
+
+    const response = await fetch(endpoint);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data = (await response.json()) as Partial<TimelinePayload>;
+    return {
+      date: data.date ?? date ?? '',
+      segments: Array.isArray(data.segments) ? data.segments : [],
+      events: Array.isArray(data.events) ? data.events : [],
+    };
+  } catch (error) {
+    console.error('Failed to fetch timeline:', error);
+    return null;
+  }
+}
+
 export interface RecommendedPost {
   text: string;
   authorHandle: string;
   authorAvatar?: string;
   createdAt: string;
   url: string;
+  network: 'bsky' | 'nagi';
+}
+
+const NAGI_APPVIEW_URL =
+  import.meta.env.PUBLIC_NAGI_APPVIEW_URL ?? 'https://appview.nagi.suibari.com';
+const NAGI_WEB_URL = import.meta.env.PUBLIC_NAGI_WEB_URL ?? 'https://nagi.suibari.com';
+
+/**
+ * Turns today's pick into something renderable, whichever network it came from.
+ *
+ * Nagi posts arrive already populated — the AppView needs a service-auth JWT
+ * for most reads and is not configured to accept this origin, so the biorhythm
+ * server sends the fields along instead. Only the avatar is fetched directly,
+ * as an `<img>`, which is not subject to CORS.
+ */
+export async function resolveTopPost(top: TopPostPayload): Promise<RecommendedPost | null> {
+  if (top.network === 'nagi') {
+    if (!top.authorDid || !top.rkey) return null;
+    return {
+      text: top.text ?? '',
+      authorHandle: top.authorHandle ?? top.authorDisplayName ?? top.authorDid,
+      authorAvatar: top.authorAvatarCid
+        ? `${NAGI_APPVIEW_URL}/api/blob/${encodeURIComponent(top.authorDid)}/${encodeURIComponent(top.authorAvatarCid)}`
+        : undefined,
+      createdAt: top.createdAt ?? new Date().toISOString(),
+      url: `${NAGI_WEB_URL}/thread/${encodeURIComponent(top.authorDid)}/${encodeURIComponent(top.rkey)}`,
+      network: 'nagi',
+    };
+  }
+
+  return fetchPost(top.uri);
 }
 
 /**
@@ -196,6 +376,7 @@ export async function fetchPost(uri: string): Promise<RecommendedPost | null> {
       authorAvatar: post.author.avatar,
       createdAt: post.record?.createdAt ?? new Date().toISOString(),
       url: `https://bsky.app/profile/${post.author.handle}/post/${rkey}`,
+      network: 'bsky',
     };
   } catch (error) {
     console.error('Failed to fetch post:', error);

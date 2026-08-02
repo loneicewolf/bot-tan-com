@@ -1,0 +1,136 @@
+---
+import type { Dictionary } from '../../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const tp = t.dashboard.topPost;
+---
+
+<section class="top" aria-labelledby="top-post-heading">
+  <div class="top__head">
+    <h3 class="top__heading" id="top-post-heading">{tp.heading}</h3>
+    <!-- Which network the pick came from, stated rather than implied by colour. -->
+    <span class="top__badge" id="top-post-network" hidden></span>
+  </div>
+
+  <div class="top__body" id="top-post">
+    <p class="top__empty">{tp.empty}</p>
+  </div>
+
+  <p class="top__comment">
+    <span class="top__comment-label">{tp.commentLabel}</span>
+    <span id="daily-comment">---</span>
+  </p>
+</section>
+
+<style>
+  .top {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .top__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .top__heading {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 1.05rem;
+    color: var(--color-sky-deep);
+  }
+
+  .top__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--badge, var(--color-sky-deep)) 16%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--badge, var(--color-sky-deep)) 45%, transparent);
+  }
+
+  .top__empty {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-soft);
+  }
+
+  .top__comment {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .top__comment-label {
+    font-family: var(--font-hand);
+    color: var(--color-ink-soft);
+  }
+
+  /* The card itself is built by the script, so its styles are global. */
+  .top :global(.post) {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
+    transition: translate 180ms ease, border-color 180ms ease;
+  }
+
+  .top :global(.post:hover) {
+    translate: 0 -3px;
+    border-color: var(--color-sky-deep);
+  }
+
+  .top :global(.post__head) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .top :global(.post__avatar) {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .top :global(.post__handle) {
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+  }
+
+  .top :global(.post__text) {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .top :global(.post__time) {
+    font-size: 0.75rem;
+    color: var(--color-ink-soft);
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .top :global(.post) {
+      transition: none;
+    }
+  }
+</style>

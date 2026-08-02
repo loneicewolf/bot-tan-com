@@ -145,6 +145,62 @@ export function sketchRect(options: {
   };
 }
 
+export interface Sparkline {
+  /** `d` for the trend line, in a 100x{height} viewBox. */
+  d: string;
+  /** The same path closed against the baseline, for the area wash. */
+  area: string;
+  /** Position of the most recent point, for the end dot. */
+  last: { x: number; y: number };
+  viewBox: string;
+}
+
+/**
+ * A tiny trend line for a stat tile. Runs on the client, because the values
+ * only arrive at runtime — Chart.js is ~70KB and buys nothing at this size.
+ *
+ * The jitter is deliberately small: enough to match the drawn-by-hand borders
+ * around it, never enough to move a point far from its real value.
+ */
+export function sketchSparkline(
+  values: number[],
+  options: { seed?: number | string; height?: number; jitter?: number } = {},
+): Sparkline | null {
+  const { height = 24, jitter = 0.35 } = options;
+  if (values.length < 2) return null;
+
+  const seed = typeof options.seed === 'string' ? seedFrom(options.seed) : (options.seed ?? 1);
+  const rand = rng(seed);
+
+  const width = 100;
+  // Leave room for the stroke and the end dot so neither gets clipped.
+  const pad = 2.5;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  // A flat series would divide by zero; draw it down the middle instead.
+  const span = max - min || 1;
+
+  const points = values.map((value, i) => {
+    const x = (width / (values.length - 1)) * i;
+    const t = max === min ? 0.5 : (value - min) / span;
+    const y = height - pad - t * (height - pad * 2);
+    return {
+      x: Math.min(width, Math.max(0, x + (rand() - 0.5) * jitter)),
+      y: Math.min(height, Math.max(0, y + (rand() - 0.5) * jitter * 2)),
+    };
+  });
+
+  const d = points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`)
+    .join('');
+
+  const first = points[0]!;
+  const last = points[points.length - 1]!;
+  const area = `${d}L${last.x.toFixed(2)},${height}L${first.x.toFixed(2)},${height}Z`;
+
+  return { d, area, last, viewBox: `0 0 ${width} ${height}` };
+}
+
 /**
  * Generates a hand-drawn underline, used beneath section headings.
  * Occupies a 100x10 viewBox.

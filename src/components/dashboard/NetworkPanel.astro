@@ -1,0 +1,59 @@
+---
+interface Props {
+  /** Heading, e.g. "Bluesky". */
+  title: string;
+  emoji: string;
+  /** Series hue for this network. Tints the frame and every tile inside. */
+  color: string;
+  id: string;
+}
+
+const { title, emoji, color, id } = Astro.props;
+---
+
+<section class="panel" style={`--series:${color}`} aria-labelledby={`${id}-heading`}>
+  <h3 class="panel__heading" id={`${id}-heading`}>
+    <span class="panel__emoji" aria-hidden="true">{emoji}</span>
+    {title}
+  </h3>
+  <div class="panel__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .panel {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    padding: 0.9rem;
+    border-radius: 0.55rem;
+    /* A tinted rule down the inside edge is the cheapest way to say
+       "everything in here belongs to this network". */
+    border: 1.5px solid color-mix(in srgb, var(--series) 26%, transparent);
+    border-inline-start-width: 4px;
+    background: color-mix(in srgb, var(--series) 4%, transparent);
+    min-width: 0;
+  }
+
+  .panel__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 1.05rem;
+    color: var(--series);
+  }
+
+  .panel__emoji {
+    font-family: var(--font-emoji);
+    font-size: 1.15rem;
+  }
+
+  .panel__body {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+</style>

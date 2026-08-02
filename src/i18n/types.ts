@@ -5,6 +5,27 @@ export type Lang = (typeof LOCALES)[number];
 export const STATUSES = ['Sleep', 'WakeUp', 'Study', 'FreeTime', 'Relax'] as const;
 export type Status = (typeof STATUSES)[number];
 
+/** The four things the liveness strip watches, each an aggregate of probes. */
+export const HEALTH_TILES = ['jetstream', 'botServer', 'localLlm', 'gemini'] as const;
+export type HealthTileId = (typeof HEALTH_TILES)[number];
+
+export const HEALTH_STATES = ['ok', 'stale', 'down', 'unknown', 'unconfigured'] as const;
+export type HealthStateId = (typeof HEALTH_STATES)[number];
+
+/**
+ * Interaction types the timeline marks. Kept in step with TIMELINE_EVENT_TYPES
+ * in the biorhythm server's publicApi.ts.
+ */
+export const TIMELINE_EVENTS = [
+  'fortune',
+  'cheer',
+  'analysis',
+  'dj',
+  'anniversary',
+  'answer',
+  'recap',
+] as const;
+
 export interface ProfileRow {
   label: string;
   value: string;
@@ -98,55 +119,83 @@ export interface Dictionary {
       statusLabels: Record<Status, string>;
       statusHeading: string;
     };
-    ability: {
-      heading: string;
-      name: string;
-      jobLabel: string;
-      job: string;
-      levelLabel: string;
-      energyLabel: string;
-      stats: {
-        affirmation: string;
-        bskyLove: string;
-        talk: string;
-        intelligence: string;
-        luck: string;
-        spread: string;
-        party: string;
-        magic: string;
-      };
+    energy: {
+      label: string;
+      /** Screen-reader description of the meter, e.g. "Energy: 62%". */
+      aria: string;
     };
-    daily: {
+    health: {
       heading: string;
-      followers: string;
+      tiles: Record<HealthTileId, string>;
+      states: Record<HealthStateId, string>;
+      /** Toggle that reveals the per-probe breakdown. */
+      detailLabel: string;
+      lastOkLabel: string;
+    };
+    timeline: {
+      heading: string;
+      /** Legend/axis furniture. */
+      energyLabel: string;
+      nowLabel: string;
+      empty: string;
+      error: string;
+      previousDay: string;
+      nextDay: string;
+      today: string;
+      /** Accessible name for the segment buttons: "{time}, {status}". */
+      segmentAria: string;
+      tableLabel: string;
+      tableHeaders: { time: string; status: string; mood: string; energy: string };
+      eventLabels: Record<string, string>;
+    };
+    common: {
+      heading: string;
+      aiRequests: string;
+      aiErrorRate: string;
+    };
+    bsky: {
+      heading: string;
+      currentFollowers: string;
+      newFollowers: string;
       likes: string;
-      likesSpeed: string;
-      affirmationCount: string;
-      affirmationSpeed: string;
-      uniqueAffirmationUserCount: string;
+      affirmations: string;
+      affirmedUsers: string;
       fortune: string;
       cheer: string;
       analysis: string;
       dj: string;
       anniversary: string;
       answer: string;
-      bskyrateHourly: string;
-      rpd: string;
-      aiErrorRate: string;
+      rateLimitPoints: string;
     };
+    nagi: {
+      heading: string;
+      totalUsers: string;
+      reactions: string;
+      affirmations: string;
+      affirmedUsers: string;
+      analyses: string;
+    };
+    /** Suffix on cumulative figures, e.g. "12,345 total". */
+    totalSuffix: string;
     charts: {
       followerHistory: string;
       followerHistoryX: string;
       followerHistoryY: string;
+      nagiUserHistory: string;
+      nagiUserHistoryY: string;
       langBreakdown: string;
+      langCount: string;
       /** Bucket label for the long tail of minor languages. */
       langOther: string;
+      empty: string;
     };
     topPost: {
       heading: string;
       commentLabel: string;
       empty: string;
       error: string;
+      networkLabels: { bsky: string; nagi: string };
     };
     /** Shown when the WebSocket never connects. */
     offline: string;

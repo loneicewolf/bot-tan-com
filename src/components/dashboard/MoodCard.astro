@@ -1,23 +1,12 @@
 ---
 import { STATUSES, type Dictionary } from '../../i18n';
+import { STATUS_EMOJI } from '../../lib/dashboardTheme';
 
 interface Props {
   t: Dictionary;
 }
 
 const { t } = Astro.props;
-
-/**
- * Emoji stand-ins for Bot-tan's five utility-AI states. The bot repo ships
- * AI-generated icon PNGs for these; they are deliberately not used here.
- */
-const statusEmoji: Record<(typeof STATUSES)[number], string> = {
-  Sleep: '😴',
-  WakeUp: '🌅',
-  Study: '📖',
-  FreeTime: '🦋',
-  Relax: '☕',
-};
 ---
 
 <div class="mood">
@@ -29,6 +18,26 @@ const statusEmoji: Record<(typeof STATUSES)[number], string> = {
     </p>
   </div>
 
+  {/*
+    A ratio against a fixed limit, so it is a meter: the unfilled part of the
+    track is a lighter step of the same ramp, and the fill carries the level.
+  */}
+  <div class="mood__energy">
+    <p class="mood__label">
+      {t.dashboard.energy.label}: <span class="mood__energy-value" id="ability-energy">---%</span>
+    </p>
+    <div
+      class="meter"
+      id="energy-meter"
+      role="meter"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-label={t.dashboard.energy.label}
+    >
+      <span class="meter__fill" id="energy-fill"></span>
+    </div>
+  </div>
+
   <div class="mood__states">
     <p class="mood__label">{t.dashboard.mood.statusHeading}</p>
     <ul class="states">
@@ -36,7 +45,7 @@ const statusEmoji: Record<(typeof STATUSES)[number], string> = {
         STATUSES.map((status) => (
           <li class="state" id={`state-${status}`} data-status={status}>
             <span class="state__emoji" aria-hidden="true">
-              {statusEmoji[status]}
+              {STATUS_EMOJI[status]}
             </span>
             <span class="state__name">{t.dashboard.mood.statusLabels[status]}</span>
             <span class="state__score" id={`utility-${status}`}>
@@ -83,6 +92,36 @@ const statusEmoji: Record<(typeof STATUSES)[number], string> = {
     font-size: 0.8rem;
     color: var(--color-ink-soft);
     font-variant-numeric: tabular-nums;
+  }
+
+  .mood__energy-value {
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meter {
+    height: 0.9rem;
+    border-radius: 999px;
+    overflow: hidden;
+    /* The empty part of the track is a lighter step of the fill's own ramp, so
+       the level reads across the whole bar rather than only where it stops. */
+    background: color-mix(in srgb, var(--color-sky-deep) 14%, var(--color-paper));
+    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 26%, transparent);
+  }
+
+  .meter__fill {
+    display: block;
+    height: 100%;
+    width: var(--level, 0%);
+    border-radius: inherit;
+    background: var(--meter-color, var(--color-sky-deep));
+    transition: width 400ms ease, background 400ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meter__fill {
+      transition: none;
+    }
   }
 
   .states {

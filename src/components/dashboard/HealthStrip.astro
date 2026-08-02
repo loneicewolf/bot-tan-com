@@ -1,0 +1,179 @@
+---
+import { HEALTH_TILES, type Dictionary } from '../../i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const h = t.dashboard.health;
+
+/**
+ * Each tile stands for one or more probes; the script fills in the state and
+ * the breakdown. Markup is rendered up front so the strip never reflows when
+ * the first status frame lands.
+ */
+const tiles = HEALTH_TILES.map((id) => ({ id, label: h.tiles[id] }));
+---
+
+<section class="health" aria-labelledby="health-heading">
+  <h3 class="health__heading" id="health-heading">{h.heading}</h3>
+
+  <ul class="health__list">
+    {
+      tiles.map((tile) => (
+        <li class="lamp" id={`health-${tile.id}`} data-state="unknown">
+          {/*
+            The shape carries the state as well as the colour: a filled disc when
+            all is well, a hollow ring when it is not. Colour alone would leave
+            the strip unreadable in grayscale and under full CVD.
+          */}
+          <span class="lamp__dot" aria-hidden="true" />
+          <span class="lamp__body">
+            <span class="lamp__label">{tile.label}</span>
+            <span class="lamp__state" id={`health-${tile.id}-state`}>
+              {h.states.unknown}
+            </span>
+          </span>
+          <details class="lamp__details">
+            <summary>{h.detailLabel}</summary>
+            <ul class="lamp__parts" id={`health-${tile.id}-parts`} />
+          </details>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .health {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .health__heading {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+  }
+
+  .health__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  }
+
+  .lamp {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'dot body'
+      '.   details';
+    align-items: center;
+    gap: 0.1rem 0.55rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+  }
+
+  .lamp__dot {
+    grid-area: dot;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    /* Overridden per state below; `currentColor` keeps ring and fill in step. */
+    color: var(--state-color, #8a8079);
+    background: currentColor;
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+  }
+
+  /* Running: a filled disc that breathes. */
+  .lamp[data-state='ok'] .lamp__dot {
+    animation: pulse-lamp 2.6s ease-in-out infinite;
+  }
+
+  /* Everything else: a hollow ring, so state survives grayscale and CVD. */
+  .lamp[data-state='stale'] .lamp__dot,
+  .lamp[data-state='down'] .lamp__dot,
+  .lamp[data-state='unknown'] .lamp__dot,
+  .lamp[data-state='unconfigured'] .lamp__dot {
+    background: var(--color-paper);
+    border: 3px solid currentColor;
+  }
+
+  /* Not configured is a statement of intent, not a fault — mute it right down. */
+  .lamp[data-state='unconfigured'] {
+    opacity: 0.6;
+  }
+
+  @keyframes pulse-lamp {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, currentColor 8%, transparent);
+    }
+  }
+
+  .lamp__body {
+    grid-area: body;
+    display: grid;
+    gap: 0.05rem;
+    min-width: 0;
+  }
+
+  .lamp__label {
+    font-family: var(--font-hand);
+    font-size: 0.85rem;
+    line-height: 1.35;
+  }
+
+  .lamp__state {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: var(--color-ink-soft);
+  }
+
+  .lamp__details {
+    grid-area: details;
+    font-size: 0.7rem;
+  }
+
+  .lamp__details summary {
+    cursor: pointer;
+    color: var(--color-ink-soft);
+    list-style-position: inside;
+  }
+
+  .lamp__parts {
+    list-style: none;
+    margin: 0.3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+    color: var(--color-ink-soft);
+  }
+
+  .lamp__parts :global(li) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    line-height: 1.5;
+  }
+
+  .lamp__parts :global(.part__state) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lamp__parts :global(.part__error) {
+    flex-basis: 100%;
+    overflow-wrap: anywhere;
+    opacity: 0.85;
+  }
+</style>

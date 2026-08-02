@@ -5,16 +5,49 @@ interface Props {
   id: string;
   /** Appended after the value, e.g. "%" or "/min". */
   suffix?: string;
+  /**
+   * Reserves room for a 30-day sparkline. The script draws into it when the
+   * history endpoint has data for this metric and leaves it empty otherwise —
+   * the tile is useful without it.
+   */
+  trend?: boolean;
+  /** Reserves a line under the value, e.g. a cumulative total. */
+  note?: boolean;
+  /** Series hue, so the tile reads as part of its panel. */
+  color?: string;
+  /** Renders the value at hero size. At most one per panel. */
+  size?: 'normal' | 'lead';
 }
 
-const { label, id, suffix } = Astro.props;
+const {
+  label,
+  id,
+  suffix,
+  trend = false,
+  note = false,
+  color = 'var(--color-sky-deep)',
+  size = 'normal',
+} = Astro.props;
 ---
 
-<div class="tile">
+<div class="tile" data-size={size} style={`--series:${color}`}>
   <p class="tile__label">{label}</p>
   <p class="tile__value">
     <span id={id}>---</span>{suffix && <span class="tile__suffix">{suffix}</span>}
   </p>
+  {note && <p class="tile__note" id={`${id}-note`} />}
+  {
+    trend && (
+      <svg
+        class="tile__spark"
+        id={`${id}-spark`}
+        viewBox="0 0 100 24"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      />
+    )
+  }
 </div>
 
 <style>
@@ -22,12 +55,10 @@ const { label, id, suffix } = Astro.props;
     padding: 0.7rem 0.75rem;
     border-radius: 0.5rem;
     background: color-mix(in srgb, var(--color-paper) 88%, transparent);
-    border: 1.5px solid color-mix(in srgb, var(--color-sky-deep) 28%, transparent);
-    text-align: center;
+    border: 1.5px solid color-mix(in srgb, var(--series) 30%, transparent);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 0.3rem;
+    gap: 0.25rem;
   }
 
   .tile__label {
@@ -39,16 +70,44 @@ const { label, id, suffix } = Astro.props;
 
   .tile__value {
     margin: 0;
+    margin-block-start: auto;
     font-family: var(--font-hand);
     font-size: 1.35rem;
     line-height: 1.2;
-    color: var(--color-sky-deep);
-    /* Digits line up as the numbers tick over. */
-    font-variant-numeric: tabular-nums;
+    color: var(--series);
+    /*
+     * Proportional figures on purpose: tabular-nums gives every digit the width
+     * of a zero, which makes a number like 121 look gappy at this size. Columns
+     * of numbers (the timeline table, chart axes) still use tabular.
+     */
+  }
+
+  /* The one number a panel leads with. */
+  .tile[data-size='lead'] {
+    grid-column: span 2;
+  }
+
+  .tile[data-size='lead'] .tile__value {
+    font-size: clamp(2rem, 6vw, 2.75rem);
   }
 
   .tile__suffix {
     font-size: 0.8rem;
     margin-left: 0.1rem;
+  }
+
+  .tile__note {
+    margin: 0;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile__spark {
+    width: 100%;
+    height: 1.5rem;
+    display: block;
+    overflow: visible;
   }
 </style>

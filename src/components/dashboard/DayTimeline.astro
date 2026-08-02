@@ -1,0 +1,381 @@
+---
+import { STATUSES, type Dictionary } from '../../i18n';
+import { STATUS_COLORS, STATUS_EMOJI } from '../../lib/dashboardTheme';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+const tl = t.dashboard.timeline;
+
+/** Ticks every six hours — enough to orient without crowding the axis. */
+const HOUR_TICKS = [0, 6, 12, 18, 24];
+
+const legend = STATUSES.map((status) => ({
+  status,
+  label: t.dashboard.mood.statusLabels[status],
+  emoji: STATUS_EMOJI[status],
+  color: STATUS_COLORS[status],
+}));
+---
+
+<section class="tl" aria-labelledby="timeline-heading">
+  <div class="tl__head">
+    <h3 class="tl__heading" id="timeline-heading">{tl.heading}</h3>
+    <div class="tl__pager">
+      <button type="button" class="tl__nav" id="timeline-prev" aria-label={tl.previousDay}>
+        ‹
+      </button>
+      <span class="tl__date" id="timeline-date" aria-live="polite">--</span>
+      <button type="button" class="tl__nav" id="timeline-next" aria-label={tl.nextDay}> › </button>
+    </div>
+  </div>
+
+  <p class="tl__status" id="timeline-status" hidden></p>
+
+  <div class="tl__plot" id="timeline-plot">
+    <!--
+      The energy line rides above the band. It shares the band's x scale, so the
+      two read as one picture rather than as a second chart with its own axis.
+    -->
+    <div class="tl__energy" aria-hidden="true">
+      <span class="tl__energy-label">{tl.energyLabel}</span>
+      <svg
+        class="tl__energy-svg"
+        id="timeline-energy"
+        viewBox="0 0 100 24"
+        preserveAspectRatio="none"
+        focusable="false"
+      ></svg>
+    </div>
+
+    <!-- Segments are injected as <button>s so the day is walkable by keyboard. -->
+    <div class="tl__band" id="timeline-band" role="list"></div>
+
+    <div class="tl__events" id="timeline-events" aria-hidden="true"></div>
+
+    <div class="tl__axis" aria-hidden="true">
+      {
+        HOUR_TICKS.map((hour, i) => (
+          <span
+            class="tl__tick"
+            data-edge={i === 0 ? 'start' : i === HOUR_TICKS.length - 1 ? 'end' : undefined}
+            style={`--at:${(hour / 24) * 100}%`}
+          >
+            {hour}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <ul class="tl__legend">
+    {
+      legend.map((entry) => (
+        <li class="tl__legend-item">
+          <span class="tl__swatch" style={`--swatch:${entry.color}`} aria-hidden="true" />
+          <span class="tl__legend-emoji" aria-hidden="true">
+            {entry.emoji}
+          </span>
+          {entry.label}
+        </li>
+      ))
+    }
+  </ul>
+
+  <!-- Everything the hover layer shows, reachable without hovering at all. -->
+  <details class="tl__table">
+    <summary>{tl.tableLabel}</summary>
+    <div class="tl__table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">{tl.tableHeaders.time}</th>
+            <th scope="col">{tl.tableHeaders.status}</th>
+            <th scope="col">{tl.tableHeaders.mood}</th>
+            <th scope="col">{tl.tableHeaders.energy}</th>
+          </tr>
+        </thead>
+        <tbody id="timeline-table-body"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <div class="tl__tip" id="timeline-tip" role="status" hidden></div>
+</section>
+
+<style>
+  .tl {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .tl__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
+  .tl__heading {
+    margin: 0;
+    font-family: var(--font-hand);
+    font-size: 1.05rem;
+    color: var(--color-sky-deep);
+  }
+
+  .tl__pager {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .tl__nav {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-paper) 85%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+    border-radius: 0.4rem;
+  }
+
+  .tl__nav:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .tl__date {
+    min-width: 8.5rem;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tl__status {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+
+  .tl__plot {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  /*
+   * The label sits above the plot rather than over it: the line runs the full
+   * width, so anything overlaid on the left gets crossed out by the data.
+   */
+  .tl__energy {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .tl__energy-label {
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: var(--color-ink-soft);
+  }
+
+  .tl__energy-svg {
+    width: 100%;
+    height: 1.9rem;
+    display: block;
+    /* The stroke would otherwise be clipped where it touches the top or edges. */
+    overflow: visible;
+  }
+
+  .tl__band {
+    display: flex;
+    height: 2.2rem;
+    border-radius: 0.3rem;
+    /* The gaps between segments show this through, so it must be the surface. */
+    background: var(--color-paper);
+    overflow: hidden;
+  }
+
+  /*
+   * Segments are separated by a gap in the surface colour rather than by a
+   * border: a stroke around each block would add ink that is not data.
+   */
+  .tl__band :global(.seg) {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-right: 2px solid var(--color-paper);
+    background: var(--seg-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    /* Emoji sit on a saturated fill, so they get a light halo to stay legible. */
+    text-shadow: 0 0 3px rgb(255 255 255 / 0.55);
+  }
+
+  .tl__band :global(.seg:last-child) {
+    border-right: 0;
+  }
+
+  .tl__band :global(.seg:hover),
+  .tl__band :global(.seg:focus-visible) {
+    filter: brightness(1.12);
+  }
+
+  .tl__band :global(.seg[data-active='true'])::after {
+    /* "Right now" marker: a hand-drawn upright at the live edge. */
+    content: '';
+    position: absolute;
+    inset-block: -0.35rem;
+    inset-inline-end: -1px;
+    width: 2px;
+    background: var(--color-ink);
+    opacity: 0.75;
+  }
+
+  .tl__events {
+    position: relative;
+    height: 1.15rem;
+  }
+
+  .tl__events :global(.event) {
+    position: absolute;
+    inset-block-start: 0;
+    left: var(--at);
+    translate: -50% 0;
+    font-size: 0.72rem;
+    line-height: 1;
+    opacity: 0.85;
+  }
+
+  .tl__axis {
+    position: relative;
+    height: 1rem;
+    font-size: 0.68rem;
+    color: var(--color-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tl__tick {
+    position: absolute;
+    left: var(--at);
+    translate: -50% 0;
+  }
+
+  /* The 0 and 24 ticks sit on the plot edges; centring them crops half away. */
+  .tl__tick[data-edge='start'] {
+    translate: 0 0;
+  }
+
+  .tl__tick[data-edge='end'] {
+    translate: -100% 0;
+  }
+
+  .tl__legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    font-size: 0.75rem;
+    color: var(--color-ink-soft);
+  }
+
+  .tl__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .tl__swatch {
+    width: 0.85rem;
+    height: 0.6rem;
+    border-radius: 0.15rem;
+    background: var(--swatch);
+  }
+
+  .tl__legend-emoji {
+    font-family: var(--font-emoji);
+  }
+
+  .tl__table {
+    font-size: 0.8rem;
+  }
+
+  .tl__table summary {
+    cursor: pointer;
+    color: var(--color-ink-soft);
+  }
+
+  /* Wide content scrolls inside its own box rather than pushing the page. */
+  .tl__table-scroll {
+    overflow-x: auto;
+    margin-top: 0.5rem;
+  }
+
+  .tl__table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tl__table :global(th),
+  .tl__table :global(td) {
+    text-align: start;
+    padding: 0.3rem 0.6rem 0.3rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+    vertical-align: top;
+  }
+
+  .tl__table :global(th) {
+    color: var(--color-ink-soft);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .tl__table :global(.cell--mood) {
+    min-width: 16rem;
+  }
+
+  .tl__tip {
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.45rem;
+    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  /* The value leads; the label that names it follows. */
+  .tl__tip :global(.tip__time) {
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tl__tip :global(.tip__status) {
+    color: var(--color-ink-soft);
+  }
+
+  .tl__tip :global(.tip__mood) {
+    margin: 0.2rem 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tl__band :global(.seg) {
+      transition: none;
+    }
+  }
+</style>
