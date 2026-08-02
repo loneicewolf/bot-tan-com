@@ -20,7 +20,6 @@ export interface DailyStats {
   answer?: number;
   rpd?: number;
   rpdError?: number;
-  bskyrate?: number;
   /** Start of the current counting window, used to derive per-minute rates. */
   lastInitializedDate?: string;
   /** `[languageCode, count]` pairs. */
@@ -90,6 +89,10 @@ export interface BotStatusPayload {
   totalStats?: TotalStats;
   bsky?: { currentFollowers?: number };
   nagi?: NagiStats;
+  repoWritePoints?: {
+    hour?: { used?: number; limit?: number; windowSeconds?: number };
+    day?: { used?: number; limit?: number; windowSeconds?: number };
+  };
   health?: HealthSnapshot | null;
   topPost?: TopPostPayload | null;
 }

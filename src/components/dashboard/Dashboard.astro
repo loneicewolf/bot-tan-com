@@ -43,11 +43,10 @@ const bskyTiles = [
   { label: d.bsky.dj, id: 'bsky-dj' },
   { label: d.bsky.anniversary, id: 'bsky-anniversary' },
   { label: d.bsky.answer, id: 'bsky-answer' },
-  { label: d.bsky.rateLimitPoints, id: 'bsky-rate' },
 ];
 
 const nagiTiles = [
-  { label: d.nagi.totalUsers, id: 'nagi-users', trend: true, note: false, size: 'lead' as const },
+  { label: d.nagi.totalUsers, id: 'nagi-users', trend: false, note: false, size: 'lead' as const },
   { label: d.nagi.reactions, id: 'nagi-reactions', trend: true, note: true },
   { label: d.nagi.affirmations, id: 'nagi-affirmations', trend: true, note: true },
   { label: d.nagi.affirmedUsers, id: 'nagi-affirmed-users', trend: true, note: true },
@@ -70,6 +69,7 @@ const runtimeStrings = {
   statusLabels: d.mood.statusLabels,
   energyAria: d.energy.aria,
   totalSuffix: d.totalSuffix,
+  rateUsage: d.common.rateUsage,
   tokens: {
     status: STATUS_COLORS,
     statusEmoji: STATUS_EMOJI,
@@ -117,6 +117,8 @@ const runtimeStrings = {
       <div class="dash__common">
         <StatTile label={d.common.aiRequests} id="ai-requests" trend />
         <StatTile label={d.common.aiErrorRate} id="ai-error-rate" suffix="%" trend />
+        <StatTile label={d.common.rateLimitHour} id="repo-write-hour" note />
+        <StatTile label={d.common.rateLimitDay} id="repo-write-day" note />
       </div>
 
       <TopPostCard t={t} />
@@ -238,6 +240,7 @@ const runtimeStrings = {
     statusLabels: Record<BotStatusName, string>;
     energyAria: string;
     totalSuffix: string;
+    rateUsage: string;
     tokens: {
       status: Record<BotStatusName, string>;
       statusEmoji: Record<BotStatusName, string>;
@@ -605,7 +608,6 @@ const runtimeStrings = {
       { id: 'bsky-likes', group: 'bsky', key: 'likes', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmations', group: 'bsky', key: 'affirmations', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmed-users', group: 'bsky', key: 'affirmedUsers', color: strings.tokens.network.bsky },
-      { id: 'nagi-users', group: 'nagi', key: 'totalUsers', color: strings.tokens.network.nagi },
       { id: 'nagi-reactions', group: 'nagi', key: 'reactions', color: strings.tokens.network.nagi },
       { id: 'nagi-affirmations', group: 'nagi', key: 'affirmations', color: strings.tokens.network.nagi },
       { id: 'nagi-affirmed-users', group: 'nagi', key: 'affirmedUsers', color: strings.tokens.network.nagi },
@@ -627,13 +629,6 @@ const runtimeStrings = {
         if (values.length >= 2) {
           drawSparkline(series.id, values, series.color);
         }
-      }
-
-      // Nagi user history is reconstructed from profile creation dates, so it
-      // reaches back further than the nightly snapshots do.
-      const nagiUsers = history.nagiUsers.map((point) => point.count).slice(-SPARK_DAYS);
-      if (nagiUsers.length >= 2) {
-        drawSparkline('nagi-users', nagiUsers, strings.tokens.network.nagi);
       }
     };
 
@@ -923,8 +918,6 @@ const runtimeStrings = {
         setText('bsky-dj', fmt(daily.dj));
         setText('bsky-anniversary', fmt(daily.anniversary));
         setText('bsky-answer', fmt(daily.answer));
-        setText('bsky-rate', fmt(daily.bskyrate));
-
         setText('ai-requests', fmt(daily.rpd));
 
         // AI error rate, as a share of all requests made today.
@@ -952,6 +945,29 @@ const runtimeStrings = {
         pair('nagi-affirmed-users', nagi.affirmedUsers);
         pair('nagi-analyses', nagi.analyses);
       }
+
+      // --- Shared PDS account write limits (Bluesky + Nagi + standard.site) ---
+      const writePoints = data.repoWritePoints;
+      const renderWritePoints = (
+        id: string,
+        value: { used?: number; limit?: number } | undefined,
+      ) => {
+        const used = value?.used;
+        const limit = value?.limit;
+        setText(
+          id,
+          typeof used === 'number' && typeof limit === 'number'
+            ? `${fmt(used)} / ${fmt(limit)}`
+            : '---',
+        );
+        const percent =
+          typeof used === 'number' && typeof limit === 'number' && limit > 0
+            ? ((used / limit) * 100).toFixed(1)
+            : '---';
+        setText(`${id}-note`, template(strings.rateUsage, { percent }));
+      };
+      renderWritePoints('repo-write-hour', writePoints?.hour);
+      renderWritePoints('repo-write-day', writePoints?.day);
 
       // --- today's pick ---
       setText('daily-comment', data.topPost?.comment || daily?.botComment || '---');

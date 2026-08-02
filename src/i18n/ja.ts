@@ -140,6 +140,9 @@ export const ja = {
       heading: 'ぜんたい',
       aiRequests: 'AI Request数',
       aiErrorRate: 'AIエラー率',
+      rateLimitHour: 'PDS書き込みポイント（直近1時間）',
+      rateLimitDay: 'PDS書き込みポイント（直近24時間）',
+      rateUsage: '上限の {percent}%',
     },
     bsky: {
       heading: 'Bluesky',
@@ -154,7 +157,6 @@ export const ja = {
       dj: 'DJした回数',
       anniversary: '記念日お祝い回数',
       answer: '質問コーナー回答数',
-      rateLimitPoints: 'Rate Limit Point',
     },
     nagi: {
       heading: 'Nagi',

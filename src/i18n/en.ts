@@ -143,6 +143,9 @@ export const en = {
       heading: 'Everywhere',
       aiRequests: 'AI requests',
       aiErrorRate: 'AI error rate',
+      rateLimitHour: 'PDS write points (last hour)',
+      rateLimitDay: 'PDS write points (last 24 hours)',
+      rateUsage: '{percent}% of limit',
     },
     bsky: {
       heading: 'Bluesky',
@@ -157,7 +160,6 @@ export const en = {
       dj: 'Songs DJed',
       anniversary: 'Anniversaries celebrated',
       answer: 'Question-corner answers',
-      rateLimitPoints: 'Rate limit points',
     },
     nagi: {
       heading: 'Nagi',

@@ -152,6 +152,9 @@ export interface Dictionary {
       heading: string;
       aiRequests: string;
       aiErrorRate: string;
+      rateLimitHour: string;
+      rateLimitDay: string;
+      rateUsage: string;
     };
     bsky: {
       heading: string;
@@ -166,7 +169,6 @@ export interface Dictionary {
       dj: string;
       anniversary: string;
       answer: string;
-      rateLimitPoints: string;
     };
     nagi: {
       heading: string;
