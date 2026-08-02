@@ -122,6 +122,7 @@ const runtimeStrings = {
       followerHistoryX: string;
       followerHistoryY: string;
       langBreakdown: string;
+      langOther: string;
     };
     topPost: { heading: string; commentLabel: string; empty: string; error: string };
     offline: string;
@@ -167,7 +168,7 @@ const runtimeStrings = {
 
       if (state === 'open') hasEverConnected = true;
 
-      // Only nag about being offline if we never got a single frame.
+      // Only nag about being offline if we never managed to connect at all.
       const offline = $('dash-offline');
       if (offline) offline.hidden = hasEverConnected || state === 'connecting';
     };
@@ -186,6 +187,7 @@ const runtimeStrings = {
     const ink = '#3d3733';
     const gridColor = 'rgba(59, 126, 161, 0.18)';
     const palette = ['#3b7ea1', '#7fd4e8', '#4c6fe7', '#f2a0bc', '#f5a25d', '#9bc78a', '#c8a2e0'];
+    const otherColor = '#c3bbb0';
 
     async function loadCharts() {
       if (chartLib) return chartLib;
@@ -274,14 +276,30 @@ const runtimeStrings = {
       });
     }
 
+    /**
+     * Bot-tan's followers span ~30 languages, almost all of them a fraction of a
+     * percent. Charting every one buries the pie under its own legend, so the
+     * long tail is rolled into a single slice.
+     */
+    const LANG_SLICES = 7;
+
     async function renderLangChart(lang: [string, number][]) {
       const canvas = document.getElementById('lang-chart') as HTMLCanvasElement | null;
       if (!canvas || lang.length === 0) return;
 
       const { Chart } = await loadCharts();
 
-      const labels = lang.map((entry) => entry[0]);
-      const values = lang.map((entry) => entry[1]);
+      const sorted = [...lang].sort((a, b) => b[1] - a[1]);
+      const head = sorted.slice(0, LANG_SLICES);
+      const tail = sorted.slice(LANG_SLICES);
+
+      const labels = head.map((entry) => entry[0]);
+      const values = head.map((entry) => entry[1]);
+
+      if (tail.length > 0) {
+        labels.push(strings.charts.langOther);
+        values.push(tail.reduce((sum, entry) => sum + entry[1], 0));
+      }
 
       if (langChart) {
         langChart.data.labels = labels;
@@ -297,7 +315,9 @@ const runtimeStrings = {
           datasets: [
             {
               data: values,
-              backgroundColor: palette,
+              backgroundColor: labels.map((label, i) =>
+                label === strings.charts.langOther ? otherColor : palette[i % palette.length],
+              ),
               borderColor: '#fdf8ef',
               borderWidth: 2,
             },

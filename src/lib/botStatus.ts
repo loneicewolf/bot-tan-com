@@ -125,8 +125,8 @@ export function connectBotStatus({ onMessage, onStateChange }: ConnectOptions): 
   const scheduleRetry = () => {
     if (disposed) return;
     clearTimeout(retryTimer);
-    // Exponential backoff with jitter. The bot server rate-limits handshakes
-    // (it answers 429), so the jitter keeps many tabs from retrying in lockstep.
+    // Exponential backoff with jitter, so that a bot-server restart does not
+    // bring every open tab back in lockstep.
     const base = Math.min(30_000, 2000 * 2 ** retries);
     const delay = base * (0.7 + Math.random() * 0.6);
     retries += 1;

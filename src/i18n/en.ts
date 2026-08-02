@@ -136,6 +136,7 @@ export const en = {
       followerHistoryX: 'Date',
       followerHistoryY: 'Followers',
       langBreakdown: 'Follower languages',
+      langOther: 'Other',
     },
     topPost: {
       heading: "Bot-tan's recommended post",
@@ -258,6 +259,13 @@ export const en = {
         title: "Bot-tan's diary",
         description: 'The diary she writes herself, over on Leaflet.',
         href: 'https://leaflet.pub/p/bot-tan.com',
+      },
+      {
+        id: 'youtube',
+        emoji: '📺',
+        title: 'YouTube',
+        description: "suibari's YouTube channel, Bot-tan videos included.",
+        href: 'https://www.youtube.com/@%E3%81%99%E3%81%84%E3%81%B0%E3%82%8A',
       },
       {
         id: 'patreon',

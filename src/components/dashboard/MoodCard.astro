@@ -50,17 +50,16 @@ const statusEmoji: Record<(typeof STATUSES)[number], string> = {
 </div>
 
 <style>
+  /*
+   * Stacked, not side by side: Bot-tan writes her mood freely and a real one
+   * runs to a couple of hundred characters. In a narrow column that became a
+   * sixteen-line ribbon, so the text gets the full width and the state tiles
+   * sit underneath.
+   */
   .mood {
     display: grid;
     gap: 1.5rem;
     grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 720px) {
-    .mood {
-      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
-      align-items: start;
-    }
   }
 
   .mood__label {
@@ -72,9 +71,10 @@ const statusEmoji: Record<(typeof STATUSES)[number], string> = {
 
   .mood__value {
     margin: 0;
+    max-width: 60ch;
     font-family: var(--font-hand);
-    font-size: clamp(1.3rem, 3.5vw, 1.7rem);
-    line-height: 1.5;
+    font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+    line-height: 1.75;
     color: var(--color-sky-deep);
   }
 

@@ -62,6 +62,10 @@ bot の biorhythm server から WebSocket でリアルタイムに受け取り�
 
 おすすめ投稿は `https://public.api.bsky.app` の公開 XRPC を直接叩いています（`@atproto/api` は入れていません）。
 
+`biorhythm_server` は WebSocket の Origin を許可リストで検査します。**新しいドメインから
+繋ぐときは、bot リポジトリ側の許可リストに追加が必要**です（`https://bot-tan.com` は対応済み）。
+許可外のオリジンはハンドシェイク時に 403 で拒否されます。
+
 ## デプロイ（Cloudflare Pages）
 
 | 項目 | 値 |

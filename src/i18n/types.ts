@@ -31,6 +31,7 @@ export type LinkId =
   | 'labeler'
   | 'discord'
   | 'diary'
+  | 'youtube'
   | 'patreon'
   | 'fanbox'
   | 'github';
@@ -138,6 +139,8 @@ export interface Dictionary {
       followerHistoryX: string;
       followerHistoryY: string;
       langBreakdown: string;
+      /** Bucket label for the long tail of minor languages. */
+      langOther: string;
     };
     topPost: {
       heading: string;

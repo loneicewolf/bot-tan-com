@@ -133,6 +133,7 @@ export const ja = {
       followerHistoryX: '日付',
       followerHistoryY: 'フォロワー数',
       langBreakdown: 'フォロワーの使用言語',
+      langOther: 'その他',
     },
     topPost: {
       heading: 'きょうのおすすめ投稿',
@@ -249,6 +250,13 @@ export const ja = {
         title: 'botたんの日記',
         description: 'botたんが自分で書いている日記（Leaflet）。',
         href: 'https://leaflet.pub/p/bot-tan.com',
+      },
+      {
+        id: 'youtube',
+        emoji: '📺',
+        title: 'YouTube',
+        description: 'すいばりのYouTubeチャンネル。botたんの動画もあるよ。',
+        href: 'https://www.youtube.com/@%E3%81%99%E3%81%84%E3%81%B0%E3%82%8A',
       },
       {
         id: 'patreon',
