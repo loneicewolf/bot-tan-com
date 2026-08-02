@@ -113,18 +113,6 @@ const runtimeStrings = {
 
       <hr class="dash__rule" />
 
-      <h3 class="dash__heading">{d.common.heading}</h3>
-      <div class="dash__common">
-        <StatTile label={d.common.aiRequests} id="ai-requests" trend />
-        <StatTile label={d.common.aiErrorRate} id="ai-error-rate" suffix="%" trend />
-        <StatTile label={d.common.rateLimitHour} id="repo-write-hour" note />
-        <StatTile label={d.common.rateLimitDay} id="repo-write-day" note />
-      </div>
-
-      <TopPostCard t={t} />
-
-      <hr class="dash__rule" />
-
       <div class="dash__networks">
         <NetworkPanel id="panel-bsky" title={d.bsky.heading} emoji="🦋" color={NETWORK_COLORS.bsky}>
           <div class="dash__tiles">
@@ -163,6 +151,18 @@ const runtimeStrings = {
           <ChartCard title={d.charts.nagiUserHistory} canvasId="nagi-user-chart" />
         </NetworkPanel>
       </div>
+
+      <hr class="dash__rule" />
+
+      <h3 class="dash__heading">{d.common.heading}</h3>
+      <div class="dash__common">
+        <StatTile label={d.common.aiRequests} id="ai-requests" trend />
+        <StatTile label={d.common.aiErrorRate} id="ai-error-rate" suffix="%" trend />
+        <StatTile label={d.common.rateLimitHour} id="repo-write-hour" note />
+        <StatTile label={d.common.rateLimitDay} id="repo-write-day" note />
+      </div>
+
+      <TopPostCard t={t} />
     </div>
   </SketchCard>
 </Section>
