@@ -115,6 +115,8 @@ const runtimeStrings = {
 
       <hr class="dash__rule" />
 
+      <h3 class="dash__heading">{d.statsHeading}</h3>
+
       <div class="dash__networks">
         <NetworkPanel id="panel-bsky" title={d.bsky.heading} emoji="🦋" color={NETWORK_COLORS.bsky}>
           <div class="dash__tiles">
@@ -156,7 +158,6 @@ const runtimeStrings = {
 
       <hr class="dash__rule" />
 
-      <h3 class="dash__heading">{d.common.heading}</h3>
       <div class="dash__common">
         <StatTile label={d.common.aiRequests} id="ai-requests" trend />
         <StatTile label={d.common.aiErrorRate} id="ai-error-rate" suffix="%" trend />

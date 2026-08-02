@@ -74,6 +74,7 @@ export const en = {
 
   dashboard: {
     heading: "Bot-tan's mood",
+    statsHeading: 'Dashboard',
     lead: 'See what she is up to right now, and how much energy she has left.',
     liveLabel: 'Live',
     jstLabel: 'Current time (JST)',
@@ -140,7 +141,6 @@ export const en = {
       },
     },
     common: {
-      heading: 'Everywhere',
       aiRequests: 'AI requests',
       aiErrorRate: 'AI error rate',
       rateLimitHour: 'PDS write points (last hour)',

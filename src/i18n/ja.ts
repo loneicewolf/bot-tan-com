@@ -71,6 +71,7 @@ export const ja = {
 
   dashboard: {
     heading: 'botたんのきもち',
+    statsHeading: 'ダッシュボード',
     lead: 'いまbotたんが何をしてるか、どのくらい元気か、リアルタイムで見えるよ。',
     liveLabel: 'リアルタイム更新',
     jstLabel: '現在時刻（JST）',
@@ -137,7 +138,6 @@ export const ja = {
       },
     },
     common: {
-      heading: 'ぜんたい',
       aiRequests: 'AI Request数',
       aiErrorRate: 'AIエラー率',
       rateLimitHour: 'PDS書き込みポイント（直近1時間）',

@@ -104,6 +104,7 @@ export interface Dictionary {
 
   dashboard: {
     heading: string;
+    statsHeading: string;
     lead: string;
     liveLabel: string;
     jstLabel: string;
@@ -149,7 +150,6 @@ export interface Dictionary {
       eventLabels: Record<string, string>;
     };
     common: {
-      heading: string;
       aiRequests: string;
       aiErrorRate: string;
       rateLimitHour: string;
