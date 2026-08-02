@@ -960,10 +960,28 @@ const runtimeStrings = {
       if (topPost?.uri && topPost.uri !== lastTopPostUri) {
         lastTopPostUri = topPost.uri;
         void renderTopPost(topPost);
+      } else if (!topPost?.uri && lastTopPostUri !== null) {
+        lastTopPostUri = null;
+        renderEmptyTopPost();
       }
     };
 
     // --------------------------------------------------- recommended post --
+    function renderEmptyTopPost() {
+      const container = $('top-post');
+      if (container) {
+        const p = document.createElement('p');
+        p.className = 'top__empty';
+        p.textContent = strings.topPost.empty;
+        container.replaceChildren(p);
+      }
+      const badge = $('top-post-network');
+      if (badge) {
+        badge.hidden = true;
+        badge.textContent = '';
+      }
+    }
+
     async function renderTopPost(payload: TopPostPayload) {
       const container = $('top-post');
       if (!container) return;
@@ -977,6 +995,8 @@ const runtimeStrings = {
       }
 
       const post = await resolveTopPost(payload);
+      // 解決中に別候補または空状態へ切り替わった場合、古い非同期結果を描画しない。
+      if (payload.uri !== lastTopPostUri) return;
       if (!post) {
         const p = document.createElement('p');
         p.className = 'top__empty';
