@@ -20,6 +20,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const WIDTH = 1200;
 const HEIGHT = 630;
 const ART_WIDTH = 470;
+const SUIBARI_LOGO_WIDTH = 240;
+const SUIBARI_LOGO_RIGHT = 40;
+const SUIBARI_LOGO_BOTTOM = 36;
 
 const paper = '#fdf8ef';
 const ink = '#3d3733';
@@ -32,11 +35,11 @@ const art = await sharp(join(root, 'src/assets/characters/trio.png'))
   .resize({ width: ART_WIDTH, height: HEIGHT, fit: 'cover', position: 'top' })
   .toBuffer();
 
-// The bot-tan.com logo carries both the mark and the domain, so it is the only
-// branding the card needs.
-const brandMark = await sharp(join(root, 'src/assets/brand/bot-tan-logo.png'))
-  .resize({ width: 420, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+// Keep the publisher mark inside the lower-right corner of the text panel.
+const suibariLogo = await sharp(join(root, 'src/assets/brand/suibari-logo.png'))
+  .resize({ width: SUIBARI_LOGO_WIDTH, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
   .toBuffer();
+const suibariLogoMetadata = await sharp(suibariLogo).metadata();
 
 const background = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}">
@@ -56,20 +59,24 @@ const background = `
   <rect width="${WIDTH}" height="${HEIGHT}" filter="url(#grain)" opacity="0.06"/>
 
   <!-- Highlighter behind the title -->
-  <rect x="76" y="268" width="430" height="26" fill="${marker}"/>
+  <rect x="76" y="198" width="430" height="26" fill="${marker}"/>
 
-  <text x="76" y="290" font-family="Yomogi, sans-serif" font-size="76" fill="${ink}">全肯定botたん</text>
-  <text x="76" y="350" font-family="Yomogi, sans-serif" font-size="34" fill="${skyDeep}">Zenkoutei Bot-tan</text>
+  <text x="76" y="220" font-family="Yomogi, sans-serif" font-size="76" fill="${ink}">全肯定botたん</text>
+  <text x="76" y="280" font-family="Yomogi, sans-serif" font-size="34" fill="${skyDeep}">Zenkoutei Bot-tan</text>
 
-  <text x="76" y="452" font-family="Yomogi, sans-serif" font-size="25" fill="${ink}">NagiとBlueskyで、みんなを全肯定する女の子。</text>
-  <text x="76" y="496" font-family="Yomogi, sans-serif" font-size="25" fill="${ink}">A girl who affirms everyone, on Nagi and Bluesky.</text>
+  <text x="76" y="407" font-family="Yomogi, sans-serif" font-size="25" fill="${ink}">NagiとBlueskyで、みんなを全肯定する女の子。</text>
+  <text x="76" y="451" font-family="Yomogi, sans-serif" font-size="25" fill="${ink}">A girl who affirms everyone, on Nagi and Bluesky.</text>
 
 </svg>`;
 
 await sharp(Buffer.from(background))
   .composite([
     { input: art, left: WIDTH - ART_WIDTH, top: 0 },
-    { input: brandMark, left: 76, top: 62 },
+    {
+      input: suibariLogo,
+      left: WIDTH - ART_WIDTH - SUIBARI_LOGO_RIGHT - SUIBARI_LOGO_WIDTH,
+      top: HEIGHT - SUIBARI_LOGO_BOTTOM - suibariLogoMetadata.height,
+    },
   ])
   // Palette + quantisation: the art is flat-shaded, so this cuts the file to
   // roughly a fifth with no visible loss.
