@@ -194,7 +194,7 @@ const legend = STATUSES.map((status) => ({
   }
 
   .tl__band {
-    display: flex;
+    position: relative;
     height: 2.2rem;
     border-radius: 0.3rem;
     /* The gaps between segments show this through, so it must be the surface. */
@@ -207,7 +207,11 @@ const legend = STATUSES.map((status) => ({
    * border: a stroke around each block would add ink that is not data.
    */
   .tl__band :global(.seg) {
-    position: relative;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: var(--seg-start);
+    width: var(--seg-width);
+    box-sizing: border-box;
     display: grid;
     place-items: center;
     min-width: 0;

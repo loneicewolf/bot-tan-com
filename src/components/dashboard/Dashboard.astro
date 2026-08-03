@@ -686,23 +686,28 @@ const runtimeStrings = {
       const dayStart = new Date(`${payload.date}T00:00:00+09:00`).getTime();
       const DAY_MS = 24 * 60 * 60 * 1000;
       const asFraction = (iso: string) => (new Date(iso).getTime() - dayStart) / DAY_MS;
+      const onDayFraction = (iso: string) => Math.min(1, Math.max(0, asFraction(iso)));
 
       const last = payload.segments[payload.segments.length - 1]!;
+      const isToday = payload.date === jstDate();
 
       for (const segment of payload.segments) {
         const startMs = new Date(segment.start).getTime();
         const endMs = new Date(segment.end).getTime();
         const minutes = Math.max(1, (endMs - startMs) / 60000);
+        const start = onDayFraction(segment.start);
+        const width = Math.max(0, onDayFraction(segment.end) - start);
 
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'seg';
         button.setAttribute('role', 'listitem');
-        // Width tracks duration, so the band is a true time axis.
-        button.style.flexGrow = String(minutes);
-        button.style.flexBasis = '0';
+        // Position against the full 24-hour axis. Using flex-grow here would
+        // stretch an incomplete current day all the way to 24:00.
+        button.style.setProperty('--seg-start', `${start * 100}%`);
+        button.style.setProperty('--seg-width', `${width * 100}%`);
         button.style.setProperty('--seg-color', strings.tokens.status[segment.status]);
-        if (segment === last) button.dataset.active = 'true';
+        if (segment === last && isToday) button.dataset.active = 'true';
 
         const range = `${hhmm.format(new Date(segment.start))}–${hhmm.format(new Date(segment.end))}`;
         const statusLabel = strings.statusLabels[segment.status] ?? segment.status;
@@ -757,13 +762,31 @@ const runtimeStrings = {
         events.append(marker);
       }
 
-      // Energy line, sharing the band's x scale so the two read as one picture.
-      const energyPoints = payload.segments.map((segment) => segment.energy);
-      const spark = sketchSparkline(energyPoints, { seed: `energy-${payload.date}`, height: 24 });
-      if (spark) {
+      // Energy is a step line because each reading applies for its segment.
+      // Its x coordinates use the same fixed 24-hour scale as the band and
+      // event markers, leaving the rest of the current day blank.
+      const energies = payload.segments.map((segment) => segment.energy);
+      if (energies.length > 0) {
+        const height = 24;
+        const pad = 2.5;
+        const min = Math.min(...energies);
+        const max = Math.max(...energies);
+        const span = max - min || 1;
+        const y = (energy: number) =>
+          max === min ? height / 2 : height - pad - ((energy - min) / span) * (height - pad * 2);
+        const commands: string[] = [];
+
+        for (const [index, segment] of payload.segments.entries()) {
+          const startX = onDayFraction(segment.start) * 100;
+          const endX = onDayFraction(segment.end) * 100;
+          const segmentY = y(segment.energy);
+          commands.push(`${index === 0 ? 'M' : 'L'}${startX.toFixed(2)},${segmentY.toFixed(2)}`);
+          commands.push(`L${endX.toFixed(2)},${segmentY.toFixed(2)}`);
+        }
+
         const ns = 'http://www.w3.org/2000/svg';
         const path = document.createElementNS(ns, 'path');
-        path.setAttribute('d', spark.d);
+        path.setAttribute('d', commands.join(''));
         path.setAttribute('fill', 'none');
         path.setAttribute('stroke', MUTED_INK);
         path.setAttribute('stroke-width', '2');
