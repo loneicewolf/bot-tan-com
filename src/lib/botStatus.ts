@@ -317,7 +317,7 @@ export interface RecommendedPost {
 }
 
 const NAGI_APPVIEW_URL =
-  import.meta.env.PUBLIC_NAGI_APPVIEW_URL ?? 'https://appview.nagi.suibari.com';
+  import.meta.env.PUBLIC_NAGI_APPVIEW_URL ?? 'https://nagi-api.suibari.com';
 const NAGI_WEB_URL = import.meta.env.PUBLIC_NAGI_WEB_URL ?? 'https://nagi.suibari.com';
 
 /**
