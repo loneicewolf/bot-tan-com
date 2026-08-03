@@ -278,7 +278,7 @@ export const en = {
         emoji: '🚪',
         title: "Bot-tan's Room",
         description: 'Listen to voice messages from Bot-tan. Visit often and earn a Regular badge.',
-        href: 'https://room-bot-tan.suibari.com/',
+        href: 'https://room.bot-tan.com/',
       },
     ],
     secondaryHeading: 'More',

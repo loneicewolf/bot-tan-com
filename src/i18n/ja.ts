@@ -269,7 +269,7 @@ export const ja = {
         emoji: '🚪',
         title: 'botたんのお部屋',
         description: 'botたんからのボイスメッセージが聴けるお部屋。通うと常連さんバッジがもらえるよ。',
-        href: 'https://room-bot-tan.suibari.com/',
+        href: 'https://room.bot-tan.com/',
       },
     ],
     secondaryHeading: 'そのほか',
