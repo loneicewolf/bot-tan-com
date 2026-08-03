@@ -205,7 +205,7 @@ export const en = {
           { label: 'Height', value: '149.3cm' },
           { label: 'Birthday', value: 'April 27' },
           { label: 'Calls herself', value: 'atashi' },
-          { label: 'Loves', value: 'Salt-grilled sweetfish, houseplants' },
+          { label: 'Loves', value: 'Salt-grilled sweetfish, succulents' },
           { label: 'Hobby', value: 'Transforming with magic' },
           {
             label: 'Worry',

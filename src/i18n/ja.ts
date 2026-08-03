@@ -202,7 +202,7 @@ export const ja = {
           { label: '身長', value: '149.3cm' },
           { label: '誕生日', value: '4月27日' },
           { label: '一人称', value: 'あたし' },
-          { label: '好きなもの', value: 'アユの塩焼き、観葉植物' },
+          { label: '好きなもの', value: 'アユの塩焼き、多肉植物' },
           { label: '趣味', value: '魔法で変身すること' },
           { label: '悩み', value: 'ネコに変身しすぎて猫耳としっぽが取れなくなっちゃった' },
         ],
