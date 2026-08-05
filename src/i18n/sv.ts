@@ -21,7 +21,7 @@ export const en = {
     catch: [
       'Ibland så känner du som att du säjer nej till dina egna känslor.',
       'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestandels för mig själv.',
-      'Och nu, för dig oxå. Väm du en är: Hon är på din sida.',
+      'Och nu, för dig oxå. Väm du än är: Hon är på din sida.',
     ],
     subtitle: 'En tjej som stöttar alla, av olika bakgrunder på platformen Nagi och Bluesky.',
     scrollHint: 'Skrolla ned',
