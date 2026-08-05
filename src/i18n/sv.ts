@@ -171,7 +171,7 @@ export const en = {
     charts: {
       followerHistory: 'Följare över tid',
       followerHistoryX: 'Datum',
-      followerHistoryY: 'Fölhare',
+      followerHistoryY: 'Följare',
       nagiUserHistory: 'Nagi användare över tid',
       nagiUserHistoryY: 'Användare',
       nagiActivityHistory: 'Reaktioner & Poster',
