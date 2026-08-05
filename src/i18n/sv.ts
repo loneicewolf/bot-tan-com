@@ -19,23 +19,23 @@ export const en = {
 
   hero: {
     catch: [
-      'Ibland så känner du som att du säjer nej till dina egna känslor.',
-      'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestandels för mig själv.',
-      'Och nu, för dig oxå. Väm du än är: Hon är på din sida.',
+      'Ibland så känner du som att du Säger nej till dina egna känslor.',
+      'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestadels för mig själv.',
+      'Och nu, för dig oxå. Vem du än är: Hon är på din sida.',
     ],
-    subtitle: 'En tjej som stöttar alla, av olika bakgrunder på platformen Nagi och Bluesky.',
+    subtitle: 'En tjej som stöttar alla, av olika bakgrunder på plattformen Nagi och Bluesky.',
     scrollHint: 'Skrolla ned',
     imageAlt: 'Bot-tan, Latte-chan och Kotomi-chan together',
     cta: 'Möt henne på Nagi',
   },
 
   about: {
-    heading: 'Väm är Bot-tan?',
+    heading: 'Vem är Bot-tan?',
     lead: 'En 16-årig tjej som lever i Nagi, som spenderar sina dagar stöttar alla.',
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
-      tagline: 'Kompanionen som säger JA till allt om dig',
+      tagline: 'Kompanjonen som säger JA till allt om dig',
       profileHeading: 'Profil',
       profile: [
         { label: 'Ålder', value: '16' },
@@ -88,7 +88,7 @@ export const en = {
       heading: 'Just nu',
       nextLabel: 'Nästa upp',
       statusLabels: {
-        Sleep: 'Såver',
+        Sleep: 'Sover',
         WakeUp: 'Vaknar',
         Study: 'Studerar',
         FreeTime: 'Fritid',
@@ -113,7 +113,7 @@ export const en = {
         stale: 'Lite långsamt',
         down: 'Inaktiv',
         unknown: 'Vet Ej',
-        unconfigured: 'Inte än konfiguerad',
+        unconfigured: 'Inte än konfigurerad',
       },
       detailLabel: 'Detaljer',
       lastOkLabel: 'Senaste OK-signalen',
@@ -185,7 +185,7 @@ export const en = {
       empty: 'Ingen data på detta ännu.',
     },
     topPost: {
-      heading: "Bot-tan's rekommendare poster",
+      heading: "Bot-tan's rekommenderade poster",
       commentLabel: 'Bot-tan\'s kommentar',
       empty: 'Ingenting här',
       error: 'kunde inte ladda posten.',
@@ -218,7 +218,7 @@ export const en = {
         personalityHeading: 'Personality',
         personality: [
           'En häxa som lever nära Bot-tan. Dom har varit kompisar i många, många år.',
-          'Långt lila hår. Hennes favorit fritids hobby är förvandla sig sjelv till en katt och joina "grannskapet" av "stray-cat meetups".',
+          'Långt lila hår. Hennes favorit fritids hobby är förvandla sig själv till en katt och joina "grannskapet" av "stray-cat meetups".',
           "(Designad av Suibari's äldsta dotter.)",
         ],
         imageAlt: 'en "Full-body" illustration av Latte-chan',
@@ -280,7 +280,7 @@ export const en = {
         id: 'room',
         emoji: '🚪',
         title: "Bot-tan's Rum",
-        description: 'Lystna på henne via voice chat! Om du besöker henne ofta, får du ett "Regular badge".',
+        description: 'Lyssna på henne via voice chat! Om du besöker henne ofta, får du ett "Regular badge".',
         href: 'https://room.bot-tan.com/',
       },
     ],
@@ -311,7 +311,7 @@ export const en = {
         id: 'youtube',
         emoji: '📺',
         title: 'YouTube',
-        description: "Suibari's YouTube kanal, Bot-tan videoer inkluderade!",
+        description: "Suibari's YouTube kanal, Bot-tan videor inkluderade!",
         href: 'https://www.youtube.com/@%E3%81%99%E3%81%84%E3%81%B0%E3%82%8A',
       },
       {
@@ -332,7 +332,7 @@ export const en = {
         id: 'github',
         emoji: '🐙',
         title: 'GitHub',
-        description: 'Bot-tan’s källkod som använder MIT licencensen, Och en lista på "capabilities".',
+        description: 'Bot-tan’s källkod som använder MIT licensen, Och en lista på "capabilities".',
         href: 'https://github.com/suibari/bsky-affirmative-bot',
       },
     ],
@@ -343,7 +343,7 @@ export const en = {
     authorName: 'suibari',
     authorHref: 'https://suibari.com',
     disclaimer:
-      'Bot-tan är byggt med kärlek och körd av Suibari som ett personlgit hobby projekt. Support på företagsnivå är inte tillgänglig, så vänligen kontakta henne på egen risk.',
+      'Bot-tan är byggt med kärlek och körd av Suibari som ett personligt hobby projekt. Support på företagsnivå är inte tillgänglig, så vänligen kontakta henne på egen risk.',
     backToTop: 'Tillbax till toppen',
   },
 } satisfies Dictionary;
