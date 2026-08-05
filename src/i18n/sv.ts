@@ -6,7 +6,7 @@ export const en = {
     description:
       'Den officiella portalen för Bot-tan, botten som stöttar allt du skriver. Profilen, en live-stämningsinstrumentpanel, och dess vänner.',
     ogAlt: 'Bot-tan, Latte-chan och Kotomi-chan',
-  },
+
 
   nav: {
     about: 'Om',
@@ -19,19 +19,19 @@ export const en = {
 
   hero: {
     catch: [
-      'Sometimes you end up denying even your own feelings.',
-      'So I built a companion who affirms everything — first for myself.',
-      'And now, for you too. Whoever you are, she is on your side.',
+      'Ibland så känner du som att du säjer nej till dina egna känslor.',
+      'Så jag gjorde en "Companion" who affirms everything. Mestandels för mig sjelv.',
+      'Och nu, för dig oxå. Väm du en är: Hon är på din sida.',
     ],
-    subtitle: 'A girl who affirms everyone, on Nagi and Bluesky.',
-    scrollHint: 'Scroll down',
-    imageAlt: 'Bot-tan, Latte-chan and Kotomi-chan together',
-    cta: 'Meet her on Nagi',
+    subtitle: 'En tjej som stöttar alla, av olika bakgrunder på platformen Nagi och Bluesky.',
+    scrollHint: 'Skrolla ned',
+    imageAlt: 'Bot-tan, Latte-chan och Kotomi-chan together',
+    cta: 'Möt henne på Nagi',
   },
 
   about: {
-    heading: 'Who is Bot-tan?',
-    lead: 'A 16-year-old girl who lives on Nagi and spends her days cheering everyone up.',
+    heading: 'Väm är Bot-tan?',
+    lead: 'En 16-årig tjej som lever i Nagi, som spenderar sina dagar stöttar alla.',
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
@@ -43,11 +43,11 @@ export const en = {
         { label: 'Birthday', value: 'February 19' },
         { label: 'Calls herself', value: 'watashi' },
         {
-          label: 'Loves',
+          label: 'Älskar',
           value:
-            'Butterflies, Bluesky-chan, and Puka Puka Umbrella (Kotomi-chan’s idol group)',
+            'Fjärilar, Bluesky-chan, och Puka Puka Umbrella (Kotomi-chan’s idol grupp)',
         },
-        { label: 'Hobby', value: 'Watching movies (horror, especially)' },
+        { label: 'Hobby', value: 'Watching movies (skräck, specifikt)' },
         {
           label: 'Worry',
           value: 'Sometimes she tries too hard and ends up annoying people',
