@@ -12,7 +12,7 @@ export const en = {
     about: 'Om',
     dashboard: 'Mood',
     friends: 'Vänner',
-    links: 'Linkar',
+    links: 'Länkar',
     switchTo: '日本語',
     skipToContent: 'Skippa till innehållet',
   },
