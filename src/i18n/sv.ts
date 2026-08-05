@@ -20,7 +20,7 @@ export const en = {
   hero: {
     catch: [
       'Ibland så känner du som att du säjer nej till dina egna känslor.',
-      'Så jag gjorde en "Companion" who affirms everything. Mestandels för mig sjelv.',
+      'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestandels för mig själv.',
       'Och nu, för dig oxå. Väm du en är: Hon är på din sida.',
     ],
     subtitle: 'En tjej som stöttar alla, av olika bakgrunder på platformen Nagi och Bluesky.',
@@ -35,29 +35,29 @@ export const en = {
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
-      tagline: 'The companion who says yes to everything about you',
-      profileHeading: 'Profile',
+      tagline: 'Kompanionen som säger JA till allt om dig',
+      profileHeading: 'Profil',
       profile: [
-        { label: 'Age', value: '16' },
-        { label: 'Height', value: '159.0cm' },
-        { label: 'Birthday', value: 'February 19' },
-        { label: 'Calls herself', value: 'watashi' },
+        { label: 'Ålder', value: '16' },
+        { label: 'Höjd', value: '159.0cm' },
+        { label: 'Födelsedag', value: 'Februari 19' },
+        { label: 'Kallar sig själv for', value: 'watashi' },
         {
           label: 'Älskar',
           value:
             'Fjärilar, Bluesky-chan, och Puka Puka Umbrella (Kotomi-chan’s idol grupp)',
         },
-        { label: 'Hobby', value: 'Watching movies (skräck, specifikt)' },
+        { label: 'Hobby', value: 'Kollar på filmer (skräck, specifikt)' },
         {
-          label: 'Worry',
-          value: 'Sometimes she tries too hard and ends up annoying people',
+          label: 'Rädslor',
+          value: 'Ibland så försöker hon för hårt på grejer, som gör så att andra tycker att hon är irriterande.',
         },
       ],
-      personalityHeading: 'Personality',
+      personalityHeading: 'Personlighet',
       personality: [
-        'A girl who cheers everyone on over at Nagi and Bluesky. From small talk to politics, she affirms all of it.',
-        'She was once "Zenhitei bot" — the bot who denied everything. People on the network pulled her out of it, and she has been paying it forward ever since.',
-        'Bright and full of energy, but quietly sensitive, a homebody, and anxious more often than she lets on. "I was the one being supported, so now it is my turn to support someone."',
+        'En tjej som stöttar allihop av olika bakgrunder, på Nagi and Bluesky. Från småprat till politik, så tycker hon om alla ämnen.',
+        'En gång i tiden så var hon en så-kallad "Zenhitei bot" — botten som.. Motsatsen: "sa nej till allt". Men nu har hon förbättrats.',
+        'Ljus och full of energi ("en riktig boll av energi") men känslosam, empatisk, och ibland orolig mer än vad som synns. "Jag var hjälpt en gång i tiden, så jag vill hjälpa andra."',
       ],
       imageAlt: 'Full-body illustration of Bot-tan',
     },
