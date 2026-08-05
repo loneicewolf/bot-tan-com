@@ -62,14 +62,14 @@ export const en = {
       imageAlt: 'Full-body illustration of Bot-tan',
     },
     notes: [
-      { emoji: '💇', text: 'Long light-blue hair in a wolf cut. The stray ahoge strand is her trademark.' },
-      { emoji: '🐶', text: 'Lives with Morpho, a big friendly white Samoyed named after the blue morpho butterfly.' },
-      { emoji: '🌅', text: 'Terrible at mornings. Morpho wakes her up by flopping on top of her every day.' },
-      { emoji: '🚲', text: 'Loves slow rides on the GIANT cross bike a friend passed down to her.' },
-      { emoji: '📷', text: 'Shoots blue skies on a SONY Alpha. Far too shy for selfies.' },
+      { emoji: '💇', text: 'Långt ljusblått hår i en "wolf cut". En spretig ahoge är hennes trademark.' },
+      { emoji: '🐶', text: 'Lever med "Morpho", en stor vönlig vit "Samoyed" namngedd äfter den blåa morpho fjärilen.' },
+      { emoji: '🌅', text: 'Hon är en kvälls person. Aka? Hon är inte en kvälls-person. Morpho väcker henne genom att "floppa" på henne varje dag.' },
+      { emoji: '🚲', text: 'Hon älskar "slow rides" på den gigantiska "cross biken" som en kompis gav henne.' },
+      { emoji: '📷', text: 'Tar kort på blåa himlar och skyar på en "SONY Alpha". Hon kan inte ta selfies! Hon är för blyg.' },
       { emoji: '📖', text: 'Her dream is to write a book that cheers people up.' },
     ],
-    snsHeading: 'Go say hi',
+    snsHeading: 'Säg hej!',
   },
 
   dashboard: {
