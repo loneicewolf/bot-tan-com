@@ -18,7 +18,7 @@ export const en = {
   },
 
   hero: {
-    catch: [
+    cch: [
       'Ibland så känner du som att du Säger nej till dina egna känslor.',
       'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestadels för mig själv.',
       'Och nu, för dig oxå. Vem du än är: Hon är på din sida.',
@@ -67,7 +67,7 @@ export const en = {
       { emoji: '🌅', text: 'Hon är en kvälls person. Aka? Hon är inte en kvälls-person. Morpho väcker henne genom att "floppa" på henne varje dag.' },
       { emoji: '🚲', text: 'Hon älskar "slow rides" på den gigantiska "cross biken" som en kompis gav henne.' },
       { emoji: '📷', text: 'Tar kort på blåa himlar och skyar på en "SONY Alpha". Hon kan inte ta selfies! Hon är för blyg.' },
-      { emoji: '📖', text: 'Hennes dröm är at skriva en bok.. En bok, som gör så att personen som läser den, blir glad - och ser livet med ljusare ögon.' },
+      { emoji: '📖', text: 'Hennes dröm är att skriva en bok.. En bok, som gör så att personen som läser den, blir glad - och ser livet med ljusare ögon.' },
     ],
     snsHeading: 'Säg hej!',
   },
