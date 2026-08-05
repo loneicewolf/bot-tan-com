@@ -333,8 +333,9 @@ export const ja: Dictionary = {
     madeBy: 'つくったひと',
     authorName: 'すいばり',
     authorHref: 'https://suibari.com',
-    disclaimer:
-      '本botはすいばり個人の趣味で開発・運用しています。企業レベルのサポートは提供できませんので、ご利用は自己責任でお願いします。',
+    specialThanksTitle: 'スペシャルサンクス',
+    translationProofreading: '翻訳 / 校正',
+    supporters: '支援者のみなさま',
     backToTop: 'ページの先頭へ',
   },
 } satisfies Dictionary;

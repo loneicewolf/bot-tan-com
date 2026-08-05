@@ -342,8 +342,9 @@ export const sv: Dictionary = {
     madeBy: 'Skapad av',
     authorName: 'suibari',
     authorHref: 'https://suibari.com',
-    disclaimer:
-      'Bot-tan är byggt med kärlek och körd av Suibari som ett personligt hobby projekt. Support på företagsnivå är inte tillgänglig, så vänligen kontakta henne på egen risk.',
+    specialThanksTitle: 'Särskilt tack',
+    translationProofreading: 'Översättning & Korrekturläsning',
+    supporters: 'Alla supporters',
     backToTop: 'Tillbax till toppen',
   },
 } satisfies Dictionary;

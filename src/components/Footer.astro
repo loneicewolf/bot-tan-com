@@ -30,7 +30,23 @@ const t = useTranslations(lang);
       />
     </a>
 
-    <p class="site-footer__disclaimer">{t.footer.disclaimer}</p>
+    <div class="site-footer__thanks">
+      <p class="site-footer__thanks-title">{t.footer.specialThanksTitle}</p>
+      <ul class="site-footer__thanks-list">
+        <li>
+          {t.footer.translationProofreading}:{' '}
+          <a
+            href="https://github.com/loneicewolf"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="site-footer__thanks-link"
+          >
+            loneicewolf
+          </a>
+        </li>
+        <li>{t.footer.supporters}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="site-footer__bar">
@@ -91,11 +107,40 @@ const t = useTranslations(lang);
     display: block;
   }
 
-  .site-footer__disclaimer {
-    margin: 1.5rem 0 0;
+  .site-footer__thanks {
+    margin: 1.75rem 0 0;
+    color: color-mix(in srgb, var(--color-paper) 80%, transparent);
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .site-footer__thanks-title {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-hand);
+    font-size: 0.95rem;
     color: color-mix(in srgb, var(--color-paper) 72%, transparent);
-    line-height: 1.9;
-    font-size: 0.82rem;
+  }
+
+  .site-footer__thanks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  .site-footer__thanks-link {
+    color: var(--color-sky);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 180ms ease;
+  }
+
+  .site-footer__thanks-link:hover,
+  .site-footer__thanks-link:focus-visible {
+    opacity: 0.8;
   }
 
   .site-footer__bar {

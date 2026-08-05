@@ -342,8 +342,9 @@ export const en: Dictionary = {
     madeBy: 'Made by',
     authorName: 'suibari',
     authorHref: 'https://suibari.com',
-    disclaimer:
-      'Bot-tan is built and operated by suibari as a personal hobby project. Corporate-level support is not available, so please use her at your own risk.',
+    specialThanksTitle: 'Special Thanks',
+    translationProofreading: 'Translation & Proofreading',
+    supporters: 'Supporters',
     backToTop: 'Back to top',
   },
 } satisfies Dictionary;

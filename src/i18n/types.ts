@@ -229,7 +229,9 @@ export interface Dictionary {
     madeBy: string;
     authorName: string;
     authorHref: string;
-    disclaimer: string;
+    specialThanksTitle: string;
+    translationProofreading: string;
+    supporters: string;
     backToTop: string;
   };
 }
