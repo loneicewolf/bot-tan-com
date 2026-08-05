@@ -133,11 +133,11 @@ export const en = {
       eventLabels: {
         fortune: 'Fortune',
         cheer: 'Cheer',
-        analysis: 'Analysis',
+        analysis: 'Analys',
         dj: 'DJ',
-        anniversary: 'Anniversary',
-        answer: 'Question corner',
-        recap: 'Year in review',
+        anniversary: 'Årsdag',
+        answer: 'Fråge hörn',
+        recap: 'Sammanfattning',
       },
     },
     common: {
