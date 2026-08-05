@@ -174,7 +174,7 @@ export interface Dictionary {
       totalUsers: string;
       totalReactions: string;
       totalPosts: string;
-      totalAnalyses: string;
+      totalChannels: string;
     };
     /** Previous calendar day's increase, shown under a current total. */
     previousDayIncrease: string;
@@ -184,6 +184,11 @@ export interface Dictionary {
       followerHistoryY: string;
       nagiUserHistory: string;
       nagiUserHistoryY: string;
+      nagiActivityHistory: string;
+      nagiActivityReactions: string;
+      nagiActivityPosts: string;
+      nagiChannelHistory: string;
+      nagiChannelHistoryY: string;
       langBreakdown: string;
       langCount: string;
       /** Bucket label for the long tail of minor languages. */

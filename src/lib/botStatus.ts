@@ -47,7 +47,7 @@ export interface NagiStats {
   usersAddedYesterday?: number;
   totalReactions?: number;
   totalPosts?: number;
-  totalAnalyses?: number;
+  totalChannels?: number;
 }
 
 export type HealthState = 'ok' | 'stale' | 'down' | 'unknown' | 'unconfigured';
@@ -243,6 +243,10 @@ export interface HistoryPayload {
   daily: DailyMetricPoint[];
   /** Nagi user counts, reconstructed from profile creation dates. */
   nagiUsers: { date: string; count: number }[];
+  /** Nagi channel counts, reconstructed from channel creation dates. */
+  nagiChannels: { date: string; count: number }[];
+  /** Hourly reaction and post counts for the last 168 hours. */
+  nagiHourly: { hour: string; reactions: number; posts: number }[];
 }
 
 /** Trend data for the sparklines and the two history charts. */
@@ -258,10 +262,12 @@ export async function fetchHistory(days = 90): Promise<HistoryPayload> {
     return {
       daily: Array.isArray(data.daily) ? data.daily : [],
       nagiUsers: Array.isArray(data.nagiUsers) ? data.nagiUsers : [],
+      nagiChannels: Array.isArray(data.nagiChannels) ? data.nagiChannels : [],
+      nagiHourly: Array.isArray(data.nagiHourly) ? data.nagiHourly : [],
     };
   } catch (error) {
     console.error('Failed to fetch history:', error);
-    return { daily: [], nagiUsers: [] };
+    return { daily: [], nagiUsers: [], nagiChannels: [], nagiHourly: [] };
   }
 }
 

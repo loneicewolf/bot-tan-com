@@ -46,9 +46,9 @@ const bskyTiles = [
 
 const nagiTiles = [
   { label: d.nagi.totalUsers, id: 'nagi-users', trend: false, note: true, size: 'lead' as const },
-  { label: d.nagi.totalReactions, id: 'nagi-reactions', trend: true },
-  { label: d.nagi.totalPosts, id: 'nagi-posts', trend: true },
-  { label: d.nagi.totalAnalyses, id: 'nagi-analyses', trend: true },
+  { label: d.nagi.totalReactions, id: 'nagi-reactions', trend: false },
+  { label: d.nagi.totalPosts, id: 'nagi-posts', trend: false },
+  { label: d.nagi.totalChannels, id: 'nagi-channels', trend: true },
 ];
 
 /**
@@ -151,6 +151,7 @@ const runtimeStrings = {
             }
           </div>
           <ChartCard title={d.charts.nagiUserHistory} canvasId="nagi-user-chart" />
+          <ChartCard title={d.charts.nagiActivityHistory} canvasId="nagi-activity-chart" />
         </NetworkPanel>
       </div>
 
@@ -370,6 +371,7 @@ const runtimeStrings = {
     let chartLib: { Chart: ChartModule['Chart'] } | null = null;
     let followerChart: InstanceType<ChartModule['Chart']> | null = null;
     let nagiUserChart: InstanceType<ChartModule['Chart']> | null = null;
+    let nagiActivityChart: InstanceType<ChartModule['Chart']> | null = null;
     let langChart: InstanceType<ChartModule['Chart']> | null = null;
     // Status frames can arrive before the dashboard is scrolled into view, so
     // language data waits here until Chart.js has actually been loaded.
@@ -494,6 +496,60 @@ const runtimeStrings = {
       });
     }
 
+    async function renderNagiActivityChart(
+      points: { hour: string; reactions: number; posts: number }[],
+    ) {
+      const canvas = document.getElementById('nagi-activity-chart') as HTMLCanvasElement | null;
+      if (!canvas || points.length === 0) return;
+
+      const { Chart } = await loadCharts();
+      nagiActivityChart?.destroy();
+      nagiActivityChart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: points.map((p) => (p.hour.length > 11 ? p.hour.substring(5) : p.hour)),
+          datasets: [
+            {
+              label: strings.charts.nagiActivityReactions,
+              data: points.map((p) => p.reactions),
+              backgroundColor: strings.tokens.network.nagi,
+              borderRadius: 2,
+              maxBarThickness: 10,
+            },
+            {
+              label: strings.charts.nagiActivityPosts,
+              data: points.map((p) => p.posts),
+              backgroundColor: '#e67e22',
+              borderRadius: 2,
+              maxBarThickness: 10,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: MUTED_INK, font: { family: 'var(--font-sans)', size: 11 } },
+            },
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { color: GRID_COLOR },
+              ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 14, color: MUTED_INK },
+            },
+            y: {
+              grid: { color: GRID_COLOR },
+              border: { color: GRID_COLOR },
+              ticks: { callback: (value: unknown) => numberFormat.format(Number(value)) },
+            },
+          },
+        },
+      });
+    }
+
     /**
      * Bot-tan's followers span ~30 languages, almost all of them a fraction of
      * a percent. This used to be a pie, which buried the answer under its own
@@ -610,9 +666,7 @@ const runtimeStrings = {
       { id: 'bsky-likes', group: 'bsky', key: 'likes', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmations', group: 'bsky', key: 'affirmations', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmed-users', group: 'bsky', key: 'affirmedUsers', color: strings.tokens.network.bsky },
-      { id: 'nagi-reactions', group: 'nagi', key: 'totalReactions', color: strings.tokens.network.nagi },
-      { id: 'nagi-posts', group: 'nagi', key: 'totalPosts', color: strings.tokens.network.nagi },
-      { id: 'nagi-analyses', group: 'nagi', key: 'totalAnalyses', color: strings.tokens.network.nagi },
+      { id: 'nagi-channels', group: 'nagi', key: 'totalChannels', color: strings.tokens.network.nagi },
       { id: 'ai-requests', group: 'common', key: 'aiRequests', color: 'var(--color-sky-deep)' },
       { id: 'ai-error-rate', group: 'common', key: 'aiErrorRate', color: 'var(--color-sky-deep)' },
     ];
@@ -964,7 +1018,7 @@ const runtimeStrings = {
         );
         setText('nagi-reactions', fmt(nagi.totalReactions));
         setText('nagi-posts', fmt(nagi.totalPosts));
-        setText('nagi-analyses', fmt(nagi.totalAnalyses));
+        setText('nagi-channels', fmt(nagi.totalChannels));
       }
 
       // --- Shared PDS account write limits (Bluesky + Nagi + standard.site) ---
@@ -1129,6 +1183,7 @@ const runtimeStrings = {
 
             void renderFollowerChart(mergedFollowers);
             void renderNagiUserChart(history.nagiUsers);
+            void renderNagiActivityChart(history.nagiHourly);
             renderSparklines(history);
           })();
 
