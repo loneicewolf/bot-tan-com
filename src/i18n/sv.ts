@@ -4,17 +4,17 @@ export const en = {
   meta: {
     title: 'Zenkoutei Bot-tan Portal',
     description:
-      'The official portal for Bot-tan, the bot who affirms everything you post. Profile, a live mood dashboard, and her friends.',
-    ogAlt: 'Bot-tan, Latte-chan and Kotomi-chan',
+      'Den officiella portalen för Bot-tan, botten som stöttar allt du skriver. Profilen, en live-stämningsinstrumentpanel, och dess vänner.',
+    ogAlt: 'Bot-tan, Latte-chan och Kotomi-chan',
   },
 
   nav: {
-    about: 'About',
+    about: 'Om',
     dashboard: 'Mood',
-    friends: 'Friends',
-    links: 'Links',
+    friends: 'Vänner',
+    links: 'Linkar',
     switchTo: '日本語',
-    skipToContent: 'Skip to content',
+    skipToContent: 'Skippa till innehållet',
   },
 
   hero: {
