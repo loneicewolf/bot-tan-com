@@ -1,4 +1,4 @@
-export const LOCALES = ['ja', 'en'] as const;
+export const LOCALES = ['ja', 'en', 'sv'] as const;
 export type Lang = (typeof LOCALES)[number];
 
 /** Bot-tan's utility-AI states, as emitted by the biorhythm server. */

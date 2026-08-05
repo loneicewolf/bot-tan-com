@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import suibariLogo from '../assets/brand/suibari-logo.png';
-import { useTranslations, localizedPath, otherLang, bcp47, type Lang } from '../i18n';
+import { useTranslations, localizedPath, bcp47, LOCALES, langNames, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
@@ -9,7 +9,6 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const other = otherLang(lang);
 ---
 
 <footer class="site-footer">
@@ -35,9 +34,13 @@ const other = otherLang(lang);
   </div>
 
   <div class="site-footer__bar">
-    <a class="site-footer__link" href={localizedPath(other)} hreflang={bcp47[other]}>
-      {t.nav.switchTo}
-    </a>
+    {
+      LOCALES.filter((locale) => locale !== lang).map((locale) => (
+        <a class="site-footer__link" href={localizedPath(locale)} hreflang={bcp47[locale]}>
+          {langNames[locale]}
+        </a>
+      ))
+    }
     <a class="site-footer__link" href="#top">{t.footer.backToTop}</a>
   </div>
 </footer>

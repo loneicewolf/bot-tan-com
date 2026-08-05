@@ -51,7 +51,7 @@ const ogImage = new URL('/ogp.png', Astro.site).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:alt" content={t.meta.ogAlt} />
-    <meta property="og:locale" content={lang === 'ja' ? 'ja_JP' : 'en_US'} />
+    <meta property="og:locale" content={bcp47[lang].replace('-', '_')} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="theme-color" content="#fdf8ef" />

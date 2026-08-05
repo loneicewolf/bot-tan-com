@@ -1,6 +1,6 @@
 import type { Dictionary } from './types';
 
-export const ja = {
+export const ja: Dictionary = {
   meta: {
     title: '全肯定botたんポータル',
     description:

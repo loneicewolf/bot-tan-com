@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import botIcon from '../assets/brand/bot-icon.png';
-import { useTranslations, localizedPath, otherLang, bcp47, type Lang } from '../i18n';
+import { useTranslations, localizedPath, bcp47, LOCALES, langNames, type Lang } from '../i18n';
 
 interface Props {
   lang: Lang;
@@ -9,7 +9,6 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const other = otherLang(lang);
 
 const sections = [
   { href: '#about', label: t.nav.about },
@@ -38,11 +37,40 @@ const sections = [
       </ul>
     </nav>
 
-    <a class="lang-toggle" href={localizedPath(other)} hreflang={bcp47[other]} lang={bcp47[other]}>
-      {t.nav.switchTo}
-    </a>
+    <details class="lang-menu">
+      <summary class="lang-menu__summary">
+        <span>🌐 {langNames[lang]}</span>
+        <span class="lang-menu__arrow" aria-hidden="true">▾</span>
+      </summary>
+      <div class="lang-menu__dropdown">
+        {
+          LOCALES.map((locale) => (
+            <a
+              class={`lang-menu__option ${locale === lang ? 'is-active' : ''}`}
+              href={localizedPath(locale)}
+              hreflang={bcp47[locale]}
+              lang={bcp47[locale]}
+            >
+              {langNames[locale]}
+            </a>
+          ))
+        }
+      </div>
+    </details>
   </div>
 </header>
+
+<script>
+  // Close the dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    const menus = document.querySelectorAll<HTMLDetailsElement>('.lang-menu[open]');
+    menus.forEach((menu) => {
+      if (!menu.contains(event.target as Node)) {
+        menu.removeAttribute('open');
+      }
+    });
+  });
+</script>
 
 <style>
   .site-header {
@@ -117,24 +145,83 @@ const sections = [
     border-bottom-color: var(--color-sky);
   }
 
-  .lang-toggle {
+  .lang-menu {
+    position: relative;
     flex-shrink: 0;
+  }
+
+  .lang-menu__summary {
     font-family: var(--font-hand);
     font-size: 0.9rem;
     color: var(--color-ink);
-    text-decoration: none;
     padding: 0.3rem 0.85rem;
     border: 2px solid var(--color-ink);
-    /* Slightly uneven corners, like a shape drawn by hand. */
     border-radius: 14px 10px 16px 9px;
     background: var(--color-paper);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    user-select: none;
     transition: background 180ms ease, rotate 180ms ease;
   }
 
-  .lang-toggle:hover,
-  .lang-toggle:focus-visible {
+  .lang-menu__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lang-menu__summary:hover,
+  .lang-menu__summary:focus-visible {
     background: var(--color-marker);
     rotate: -1.5deg;
+  }
+
+  .lang-menu__arrow {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    transition: transform 180ms ease;
+  }
+
+  .lang-menu[open] .lang-menu__arrow {
+    transform: rotate(180deg);
+  }
+
+  .lang-menu__dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.4rem);
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+    border-radius: 12px 14px 10px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 7.5rem;
+    z-index: 30;
+  }
+
+  .lang-menu__option {
+    font-family: var(--font-hand);
+    font-size: 0.88rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .lang-menu__option:hover,
+  .lang-menu__option:focus-visible {
+    background: var(--color-marker);
+  }
+
+  .lang-menu__option.is-active {
+    font-weight: bold;
+    color: var(--color-sky-deep);
+    background: color-mix(in srgb, var(--color-sky) 20%, transparent);
   }
 
   /* The section links are the first thing to go when space runs out. */

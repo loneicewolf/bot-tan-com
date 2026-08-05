@@ -8,10 +8,10 @@ export default defineConfig({
   site: 'https://bot-tan.com',
 
   i18n: {
-    locales: ['ja', 'en'],
+    locales: ['ja', 'en', 'sv'],
     defaultLocale: 'ja',
     routing: {
-      // ja -> /  , en -> /en/
+      // ja -> /  , en -> /en/  , sv -> /sv/
       prefixDefaultLocale: false,
     },
   },
@@ -20,7 +20,7 @@ export default defineConfig({
     sitemap({
       i18n: {
         defaultLocale: 'ja',
-        locales: { ja: 'ja-JP', en: 'en-US' },
+        locales: { ja: 'ja-JP', en: 'en-US', sv: 'sv-SE' },
       },
     }),
   ],

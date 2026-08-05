@@ -1,10 +1,11 @@
 import { ja } from './ja';
 import { en } from './en';
+import { sv } from './sv';
 import { LOCALES, type Dictionary, type Lang } from './types';
 
 export * from './types';
 
-const dictionaries: Record<Lang, Dictionary> = { ja, en };
+const dictionaries: Record<Lang, Dictionary> = { ja, en, sv };
 
 export function useTranslations(lang: Lang): Dictionary {
   return dictionaries[lang];
@@ -26,10 +27,22 @@ export function getLangFromUrl(url: URL): Lang {
  */
 export function localizedPath(lang: Lang, path = '/'): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  return lang === 'ja' ? normalized : `/en${normalized === '/' ? '/' : normalized}`;
+  const segments = normalized.split('/');
+  let cleanPath = normalized;
+  if (segments[1] && (LOCALES as readonly string[]).includes(segments[1])) {
+    cleanPath = '/' + segments.slice(2).join('/');
+  }
+  return lang === 'ja' ? cleanPath : `/${lang}${cleanPath === '/' ? '/' : cleanPath}`;
 }
 
-/** The locale to offer in the language switcher. */
+/** Display names for each supported language. */
+export const langNames: Record<Lang, string> = {
+  ja: '日本語',
+  en: 'English',
+  sv: 'Svenska',
+};
+
+/** The locale to offer as default fallback toggle in language switchers. */
 export function otherLang(lang: Lang): Lang {
   return lang === 'ja' ? 'en' : 'ja';
 }
@@ -38,4 +51,5 @@ export function otherLang(lang: Lang): Lang {
 export const bcp47: Record<Lang, string> = {
   ja: 'ja-JP',
   en: 'en-US',
+  sv: 'sv-SE',
 };

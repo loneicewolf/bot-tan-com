@@ -1,6 +1,6 @@
 import type { Dictionary } from './types';
 
-export const sv = {
+export const sv: Dictionary = {
   meta: {
     title: 'Zenkoutei Bot-tan Portal',
     description:
