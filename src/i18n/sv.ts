@@ -339,11 +339,11 @@ export const en = {
   },
 
   footer: {
-    madeBy: 'Made by',
+    madeBy: 'Skapad av',
     authorName: 'suibari',
     authorHref: 'https://suibari.com',
     disclaimer:
-      'Bot-tan is built and operated by suibari as a personal hobby project. Corporate-level support is not available, so please use her at your own risk.',
-    backToTop: 'Back to top',
+      'Bot-tan är byggt med kärlek och körd av Suibari som ett personlgit hobby projekt. Support på företagsnivå är inte tillgänglig, så vänligen kontakta henne på egen risk.',
+    backToTop: 'Tillbax till toppen',
   },
 } satisfies Dictionary;
