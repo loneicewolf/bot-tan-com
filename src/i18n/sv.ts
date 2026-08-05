@@ -266,7 +266,7 @@ export const en = {
         emoji: '🌊',
         title: 'Nagi',
         description:
-          'Hennes häm — ett (AT) Protocol, ett socialt nätverk som hon lever i dag till dag. Ta en titt på hennes profil.',
+          'Hennes hem — ett (AT) Protocol, ett socialt nätverk som hon lever i dag till dag. Ta en titt på hennes profil.',
         href: 'https://nagi.suibari.com/profile/did:plc:qcwhrvzx6wmi5hz775uyi6fh',
       },
       {
