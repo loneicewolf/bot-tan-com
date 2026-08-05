@@ -18,7 +18,7 @@ export const en = {
   },
 
   hero: {
-    cch: [
+    catch: [
       'Ibland så känner du som att du Säger nej till dina egna känslor.',
       'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestadels för mig själv.',
       'Och nu, för dig oxå. Vem du än är: Hon är på din sida.',
