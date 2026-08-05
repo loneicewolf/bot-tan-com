@@ -159,7 +159,6 @@ export interface Dictionary {
     bsky: {
       heading: string;
       currentFollowers: string;
-      newFollowers: string;
       likes: string;
       affirmations: string;
       affirmedUsers: string;
@@ -173,13 +172,12 @@ export interface Dictionary {
     nagi: {
       heading: string;
       totalUsers: string;
-      reactions: string;
-      affirmations: string;
-      affirmedUsers: string;
-      analyses: string;
+      totalReactions: string;
+      totalPosts: string;
+      totalAnalyses: string;
     };
-    /** Suffix on cumulative figures, e.g. "12,345 total". */
-    totalSuffix: string;
+    /** Previous calendar day's increase, shown under a current total. */
+    previousDayIncrease: string;
     charts: {
       followerHistory: string;
       followerHistoryX: string;

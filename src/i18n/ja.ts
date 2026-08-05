@@ -146,8 +146,7 @@ export const ja = {
     },
     bsky: {
       heading: 'Bluesky',
-      currentFollowers: '現在のフォロワー',
-      newFollowers: '増えたフォロワー',
+      currentFollowers: 'フォロワー数',
       likes: 'いいねされた回数',
       affirmations: '全肯定した回数',
       affirmedUsers: '全肯定した人数',
@@ -160,13 +159,12 @@ export const ja = {
     },
     nagi: {
       heading: 'Nagi',
-      totalUsers: 'Nagi総ユーザー数',
-      reactions: 'リアクションされた回数',
-      affirmations: '全肯定した回数',
-      affirmedUsers: '全肯定した人数',
-      analyses: '分析した回数',
+      totalUsers: '総ユーザー数',
+      totalReactions: '総リアクション',
+      totalPosts: '総ポスト',
+      totalAnalyses: '分析した回数',
     },
-    totalSuffix: '累計 {value}',
+    previousDayIncrease: '前日 +{value}',
     charts: {
       followerHistory: 'フォロワー推移',
       followerHistoryX: '日付',

@@ -150,7 +150,6 @@ export const en = {
     bsky: {
       heading: 'Bluesky',
       currentFollowers: 'Followers',
-      newFollowers: 'New followers',
       likes: 'Likes received',
       affirmations: 'Affirmations sent',
       affirmedUsers: 'People affirmed',
@@ -163,13 +162,12 @@ export const en = {
     },
     nagi: {
       heading: 'Nagi',
-      totalUsers: 'Nagi users',
-      reactions: 'Reactions received',
-      affirmations: 'Affirmations sent',
-      affirmedUsers: 'People affirmed',
-      analyses: 'Analyses run',
+      totalUsers: 'Total users',
+      totalReactions: 'Total reactions',
+      totalPosts: 'Total posts',
+      totalAnalyses: 'Analyses run',
     },
-    totalSuffix: '{value} total',
+    previousDayIncrease: 'Previous day +{value}',
     charts: {
       followerHistory: 'Followers over time',
       followerHistoryX: 'Date',

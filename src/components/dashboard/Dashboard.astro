@@ -33,7 +33,6 @@ const d = t.dashboard;
  */
 const bskyTiles = [
   { label: d.bsky.currentFollowers, id: 'bsky-followers', trend: true, note: true, size: 'lead' as const },
-  { label: d.bsky.newFollowers, id: 'bsky-new-followers', trend: true },
   { label: d.bsky.likes, id: 'bsky-likes', trend: true },
   { label: d.bsky.affirmations, id: 'bsky-affirmations', trend: true },
   { label: d.bsky.affirmedUsers, id: 'bsky-affirmed-users', trend: true },
@@ -46,11 +45,10 @@ const bskyTiles = [
 ];
 
 const nagiTiles = [
-  { label: d.nagi.totalUsers, id: 'nagi-users', trend: false, note: false, size: 'lead' as const },
-  { label: d.nagi.reactions, id: 'nagi-reactions', trend: true, note: true },
-  { label: d.nagi.affirmations, id: 'nagi-affirmations', trend: true, note: true },
-  { label: d.nagi.affirmedUsers, id: 'nagi-affirmed-users', trend: true, note: true },
-  { label: d.nagi.analyses, id: 'nagi-analyses', trend: true, note: true },
+  { label: d.nagi.totalUsers, id: 'nagi-users', trend: false, note: true, size: 'lead' as const },
+  { label: d.nagi.totalReactions, id: 'nagi-reactions', trend: true },
+  { label: d.nagi.totalPosts, id: 'nagi-posts', trend: true },
+  { label: d.nagi.totalAnalyses, id: 'nagi-analyses', trend: true },
 ];
 
 /**
@@ -68,7 +66,7 @@ const runtimeStrings = {
   timeline: d.timeline,
   statusLabels: d.mood.statusLabels,
   energyAria: d.energy.aria,
-  totalSuffix: d.totalSuffix,
+  previousDayIncrease: d.previousDayIncrease,
   rateUsage: d.common.rateUsage,
   tokens: {
     status: STATUS_COLORS,
@@ -240,7 +238,7 @@ const runtimeStrings = {
     };
     statusLabels: Record<BotStatusName, string>;
     energyAria: string;
-    totalSuffix: string;
+    previousDayIncrease: string;
     rateUsage: string;
     tokens: {
       status: Record<BotStatusName, string>;
@@ -605,14 +603,12 @@ const runtimeStrings = {
 
     const SPARK_SERIES: { id: string; group: 'bsky' | 'nagi' | 'common'; key: string; color: string }[] = [
       { id: 'bsky-followers', group: 'bsky', key: 'currentFollowers', color: strings.tokens.network.bsky },
-      { id: 'bsky-new-followers', group: 'bsky', key: 'followers', color: strings.tokens.network.bsky },
       { id: 'bsky-likes', group: 'bsky', key: 'likes', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmations', group: 'bsky', key: 'affirmations', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmed-users', group: 'bsky', key: 'affirmedUsers', color: strings.tokens.network.bsky },
-      { id: 'nagi-reactions', group: 'nagi', key: 'reactions', color: strings.tokens.network.nagi },
-      { id: 'nagi-affirmations', group: 'nagi', key: 'affirmations', color: strings.tokens.network.nagi },
-      { id: 'nagi-affirmed-users', group: 'nagi', key: 'affirmedUsers', color: strings.tokens.network.nagi },
-      { id: 'nagi-analyses', group: 'nagi', key: 'analyses', color: strings.tokens.network.nagi },
+      { id: 'nagi-reactions', group: 'nagi', key: 'totalReactions', color: strings.tokens.network.nagi },
+      { id: 'nagi-posts', group: 'nagi', key: 'totalPosts', color: strings.tokens.network.nagi },
+      { id: 'nagi-analyses', group: 'nagi', key: 'totalAnalyses', color: strings.tokens.network.nagi },
       { id: 'ai-requests', group: 'common', key: 'aiRequests', color: 'var(--color-sky-deep)' },
       { id: 'ai-error-rate', group: 'common', key: 'aiErrorRate', color: 'var(--color-sky-deep)' },
     ];
@@ -932,7 +928,6 @@ const runtimeStrings = {
       setText('bsky-followers', fmt(data.bsky?.currentFollowers));
 
       if (daily) {
-        setText('bsky-new-followers', fmt(daily.followers));
         setText('bsky-likes', fmt(daily.likes));
         setText('bsky-affirmations', fmt(daily.affirmationCount));
         setText('bsky-affirmed-users', fmt(daily.uniqueAffirmationUserCount));
@@ -958,16 +953,14 @@ const runtimeStrings = {
       // --- Nagi ---
       const nagi = data.nagi;
       if (nagi) {
-        const pair = (id: string, value: { today?: number; total?: number } | undefined) => {
-          setText(id, fmt(value?.today));
-          setText(`${id}-note`, template(strings.totalSuffix, { value: fmt(value?.total) }));
-        };
-
         setText('nagi-users', fmt(nagi.totalUsers));
-        pair('nagi-reactions', nagi.reactions);
-        pair('nagi-affirmations', nagi.affirmations);
-        pair('nagi-affirmed-users', nagi.affirmedUsers);
-        pair('nagi-analyses', nagi.analyses);
+        setText(
+          'nagi-users-note',
+          template(strings.previousDayIncrease, { value: fmt(nagi.usersAddedYesterday) }),
+        );
+        setText('nagi-reactions', fmt(nagi.totalReactions));
+        setText('nagi-posts', fmt(nagi.totalPosts));
+        setText('nagi-analyses', fmt(nagi.totalAnalyses));
       }
 
       // --- Shared PDS account write limits (Bluesky + Nagi + standard.site) ---
@@ -1107,7 +1100,30 @@ const runtimeStrings = {
               fetchFollowerHistory(),
               fetchHistory(90),
             ]);
-            void renderFollowerChart(followers);
+            const fallbackFollowers = history.daily.flatMap((point) => {
+              const count = point.metrics?.bsky?.currentFollowers;
+              return typeof count === 'number' ? [{ date: point.date, count }] : [];
+            });
+            const latestMeasuredAt = Math.max(
+              ...followers.map((point) => new Date(point.date).getTime()).filter(Number.isFinite),
+              0,
+            );
+            const mergedFollowers = [
+              ...followers,
+              ...fallbackFollowers.filter(
+                (point) => new Date(point.date).getTime() > latestMeasuredAt,
+              ),
+            ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+            const yesterday = jstDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+            const previousFollowers = history.daily.find((point) => point.date === yesterday)
+              ?.metrics?.bsky?.followers;
+            setText(
+              'bsky-followers-note',
+              template(strings.previousDayIncrease, { value: fmt(previousFollowers) }),
+            );
+
+            void renderFollowerChart(mergedFollowers);
             void renderNagiUserChart(history.nagiUsers);
             renderSparklines(history);
           })();

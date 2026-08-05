@@ -41,18 +41,13 @@ export interface TotalStats {
   anniversary?: number;
 }
 
-/** Bot-tan's activity on Nagi. Counted straight out of the `nagi` schema. */
-export interface NagiStatPair {
-  today?: number;
-  total?: number;
-}
-
+/** Nagi-wide activity, counted straight out of the AppView's `nagi` schema. */
 export interface NagiStats {
   totalUsers?: number;
-  reactions?: NagiStatPair;
-  affirmations?: NagiStatPair;
-  affirmedUsers?: NagiStatPair;
-  analyses?: NagiStatPair;
+  usersAddedYesterday?: number;
+  totalReactions?: number;
+  totalPosts?: number;
+  totalAnalyses?: number;
 }
 
 export type HealthState = 'ok' | 'stale' | 'down' | 'unknown' | 'unconfigured';
@@ -219,7 +214,15 @@ export async function fetchFollowerHistory(): Promise<FollowerPoint[]> {
     const response = await fetch(FOLLOWER_API_URL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data: unknown = await response.json();
-    return Array.isArray(data) ? (data as FollowerPoint[]) : [];
+    if (!Array.isArray(data)) return [];
+
+    // The measurement worker can retain the timestamp even when its Bluesky
+    // profile lookup fails. Do not hand those incomplete rows to Chart.js.
+    return data.flatMap((point): FollowerPoint[] => {
+      if (!point || typeof point !== 'object') return [];
+      const { date, count } = point as Partial<FollowerPoint>;
+      return typeof date === 'string' && typeof count === 'number' && Number.isFinite(count) ? [{ date, count }] : [];
+    });
   } catch (error) {
     console.error('Failed to fetch follower history:', error);
     return [];
