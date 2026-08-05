@@ -32,7 +32,7 @@ const d = t.dashboard;
  * schema, so the two columns never double-count each other.
  */
 const bskyTiles = [
-  { label: d.bsky.currentFollowers, id: 'bsky-followers', trend: true, note: true, size: 'lead' as const },
+  { label: d.bsky.currentFollowers, id: 'bsky-followers', trend: false, note: true, size: 'lead' as const },
   { label: d.bsky.likes, id: 'bsky-likes', trend: true },
   { label: d.bsky.affirmations, id: 'bsky-affirmations', trend: true },
   { label: d.bsky.affirmedUsers, id: 'bsky-affirmed-users', trend: true },
@@ -561,8 +561,8 @@ const runtimeStrings = {
 
     // -------------------------------------------------------- sparklines ---
     /**
-     * Draws a 30-day trend inside a stat tile. The tail is de-emphasised and
-     * only the latest point wears the series colour, so the eye lands on "now".
+     * Draws a 30-day trend inside a stat tile. Every stored day gets a marker,
+     * while the latest point is larger so the eye still lands on "now".
      */
     const drawSparkline = (id: string, values: number[], color: string) => {
       const svg = $(`${id}-spark`);
@@ -589,20 +589,24 @@ const runtimeStrings = {
       line.setAttribute('stroke-linejoin', 'round');
       line.setAttribute('vector-effect', 'non-scaling-stroke');
 
-      const dot = document.createElementNS(ns, 'circle');
-      dot.setAttribute('cx', String(spark.last.x));
-      dot.setAttribute('cy', String(spark.last.y));
-      dot.setAttribute('r', '2.5');
-      dot.setAttribute('fill', color);
-      // A ring in the surface colour keeps the dot legible where it meets the line.
-      dot.setAttribute('stroke', '#fdf8ef');
-      dot.setAttribute('stroke-width', '1.5');
+      const dots = spark.points.map((point, index) => {
+        const latest = index === spark.points.length - 1;
+        const dot = document.createElementNS(ns, 'circle');
+        dot.setAttribute('cx', String(point.x));
+        dot.setAttribute('cy', String(point.y));
+        dot.setAttribute('r', latest ? '2.5' : '1.5');
+        dot.setAttribute('fill', color);
+        dot.setAttribute('opacity', latest ? '1' : '0.65');
+        // A paper-coloured ring keeps markers legible where they meet the line.
+        dot.setAttribute('stroke', '#fdf8ef');
+        dot.setAttribute('stroke-width', latest ? '1.5' : '1');
+        return dot;
+      });
 
-      svg.append(area, line, dot);
+      svg.append(area, line, ...dots);
     };
 
     const SPARK_SERIES: { id: string; group: 'bsky' | 'nagi' | 'common'; key: string; color: string }[] = [
-      { id: 'bsky-followers', group: 'bsky', key: 'currentFollowers', color: strings.tokens.network.bsky },
       { id: 'bsky-likes', group: 'bsky', key: 'likes', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmations', group: 'bsky', key: 'affirmations', color: strings.tokens.network.bsky },
       { id: 'bsky-affirmed-users', group: 'bsky', key: 'affirmedUsers', color: strings.tokens.network.bsky },

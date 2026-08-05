@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+---
+
+<BaseLayout lang="ja">
+  <Section
+    id="not-found"
+    heading="ページが見つかりません"
+    lead="URLが変わったか、ページが削除されたようです。"
+    color="var(--color-sky-deep)"
+  >
+    <a class="back-home" href="/">トップページへ戻る</a>
+  </Section>
+</BaseLayout>
+
+<style>
+  .back-home {
+    display: inline-block;
+    color: var(--color-sky-deep);
+    font-family: var(--font-hand);
+    text-underline-offset: 0.2em;
+  }
+</style>

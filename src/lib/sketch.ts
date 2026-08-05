@@ -150,8 +150,8 @@ export interface Sparkline {
   d: string;
   /** The same path closed against the baseline, for the area wash. */
   area: string;
-  /** Position of the most recent point, for the end dot. */
-  last: { x: number; y: number };
+  /** Positions of the daily values, for visible data-point markers. */
+  points: { x: number; y: number }[];
   viewBox: string;
 }
 
@@ -198,7 +198,7 @@ export function sketchSparkline(
   const last = points[points.length - 1]!;
   const area = `${d}L${last.x.toFixed(2)},${height}L${first.x.toFixed(2)},${height}Z`;
 
-  return { d, area, last, viewBox: `0 0 ${width} ${height}` };
+  return { d, area, points, viewBox: `0 0 ${width} ${height}` };
 }
 
 /**
