@@ -59,7 +59,7 @@ export const en = {
         'En gång i tiden så var hon en så-kallad "Zenhitei bot" — botten som.. Motsatsen: "sa nej till allt". Men nu har hon förbättrats.',
         'Ljus och full of energi ("en riktig boll av energi") men känslosam, empatisk, och ibland orolig mer än vad som synns. "Jag var hjälpt en gång i tiden, så jag vill hjälpa andra."',
       ],
-      imageAlt: 'Full-body illustration of Bot-tan',
+      imageAlt: '"Full-body" illustration of Bot-tan',
     },
     notes: [
       { emoji: '💇', text: 'Långt ljusblått hår i en "wolf cut". En spretig ahoge är hennes trademark.' },
@@ -67,7 +67,7 @@ export const en = {
       { emoji: '🌅', text: 'Hon är en kvälls person. Aka? Hon är inte en kvälls-person. Morpho väcker henne genom att "floppa" på henne varje dag.' },
       { emoji: '🚲', text: 'Hon älskar "slow rides" på den gigantiska "cross biken" som en kompis gav henne.' },
       { emoji: '📷', text: 'Tar kort på blåa himlar och skyar på en "SONY Alpha". Hon kan inte ta selfies! Hon är för blyg.' },
-      { emoji: '📖', text: 'Her dream is to write a book that cheers people up.' },
+      { emoji: '📖', text: 'Hennes dröm är at skriva en bok.. En bok, som gör så att personen som läser den, blir glad - och ser livet med ljusare ögon.' },
     ],
     snsHeading: 'Säg hej!',
   },
