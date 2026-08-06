@@ -94,7 +94,7 @@ export const sv: Dictionary = {
         FreeTime: 'Fritid',
         Relax: 'Chillar',
       },
-      statusHeading: 'Vad gör hon?',
+      statusHeading: 'Vad lägger hon sin tid på?',
     },
     energy: {
       label: 'Energi',
