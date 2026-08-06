@@ -259,7 +259,7 @@ export const en: Dictionary = {
 
   links: {
     heading: 'Where to find Bot-tan',
-    lead: 'Nagi is home; Bluesky is where she visits. Drop by either.',
+    lead: 'Her gome is on Nagi; She visits Bluesky sometimes. Drop by on either. Welcome!',
     primary: [
       {
         id: 'nagi',
