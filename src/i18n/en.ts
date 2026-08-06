@@ -4,7 +4,7 @@ export const en: Dictionary = {
   meta: {
     title: 'Zenkoutei Bot-tan Portal',
     description:
-      'The official portal for Bot-tan, the bot who affirms everything you post. Profile, a live mood dashboard, and her friends.',
+      'The official portal for Bot-tan, the bot who affirms everything you post. Profile, which features a live mood-dashboard & her friends.',
     ogAlt: 'Bot-tan, Latte-chan and Kotomi-chan',
   },
 
@@ -19,9 +19,9 @@ export const en: Dictionary = {
 
   hero: {
     catch: [
-      'Sometimes you end up denying even your own feelings.',
-      'So I built a companion who affirms everything — first for myself.',
-      'And now, for you too. Whoever you are, she is on your side.',
+      'Have you ever felt, that you sometimes end up denying even your own feelings?',
+      'I have, so I built a companion who affirms everything - first for myself.',
+      'And now, for you too. Whoever you are, Whichever background you may have, she is on your side.',
     ],
     subtitle: 'A girl who affirms everyone, on Nagi and Bluesky.',
     scrollHint: 'Scroll down',
