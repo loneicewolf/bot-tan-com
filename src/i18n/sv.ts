@@ -19,9 +19,9 @@ export const sv: Dictionary = {
 
   hero: {
     catch: [
-      'Ibland så känner du som att du Säger nej till dina egna känslor.',
-      'Så jag gjorde en "Companion" som stöttar allting du skriver och tänker. Mestadels för mig själv.',
-      'Och nu, för dig oxå. Vem du än är: Hon är på din sida.',
+      'Har du någon gång kännt att du själv säger nej till dina egna känslor?',
+      'Jag har, så jag gjorde en "Companion" som stöttar allting jag skriver och tänker. Mestadels för mig själv.',
+      'Men nu är hon för dig oxå för alla behöver vi någon som stöttar os - Vem du än är och vilken bakgrund du än har - är hon på din sida.',
     ],
     subtitle: 'En tjej som stöttar alla, av olika bakgrunder på plattformen Nagi och Bluesky.',
     scrollHint: 'Skrolla ned',
