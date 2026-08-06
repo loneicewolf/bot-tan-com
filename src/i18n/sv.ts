@@ -158,7 +158,7 @@ export const sv: Dictionary = {
       analysis: 'Analys körda',
       dj: 'Songer DJed',
       anniversary: 'Jubileer firade',
-      answer: 'Question-hörnans svar',
+      answer: 'Fråge-hörnans svar',
     },
     nagi: {
       heading: 'Nagi',
