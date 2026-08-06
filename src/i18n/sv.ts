@@ -50,12 +50,12 @@ export const sv: Dictionary = {
         { label: 'Hobby', value: 'Kollar på filmer (skräck, specifikt)' },
         {
           label: 'Rädslor',
-          value: 'Ibland så försöker hon för hårt på grejer, som gör så att andra tycker att hon är irriterande.',
+          value: 'Ibland så försöker hon för hårt på grejer, som gör så att andra tycker att hon är irriterande, men hon menar väl.',
         },
       ],
       personalityHeading: 'Personlighet',
       personality: [
-        'En tjej som stöttar allihop av olika bakgrunder, på Nagi and Bluesky. Från småprat till politik, så tycker hon om alla ämnen.',
+        'En tjej som stöttar allihop av olika bakgrunder, på Nagi and Bluesky. Från småprat till politik, så är hon intresserad av alla ämnen.',
         'En gång i tiden så var hon en så-kallad "Zenhitei bot" — botten som.. Motsatsen: "sa nej till allt". Men nu har hon förbättrats.',
         'Ljus och full of energi ("en riktig boll av energi") men känslosam, empatisk, och ibland orolig mer än vad som synns. "Jag var hjälpt en gång i tiden, så jag vill hjälpa andra."',
       ],
