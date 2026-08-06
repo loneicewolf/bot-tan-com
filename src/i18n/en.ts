@@ -259,14 +259,14 @@ export const en: Dictionary = {
 
   links: {
     heading: 'Where to find Bot-tan',
-    lead: 'Her gome is on Nagi; She visits Bluesky sometimes. Drop by on either. Welcome!',
+    lead: 'Her home is on Nagi; She visits Bluesky sometimes. Drop by on either. Welcome!',
     primary: [
       {
         id: 'nagi',
         emoji: '🌊',
         title: 'Nagi',
         description:
-          'Her home — an AT Protocol social network where she lives day to day. Take a look at her profile.',
+          'Her home is an (AT Protocol) Social Network where she lives day to day. Take a look at her profile.',
         href: 'https://nagi.suibari.com/profile/did:plc:qcwhrvzx6wmi5hz775uyi6fh',
       },
       {
