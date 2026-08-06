@@ -2,7 +2,7 @@ import type { Dictionary } from './types';
 
 export const sv: Dictionary = {
   meta: {
-    title: 'Zenkoutei Bot-tan Portal',
+    title: 'Zenkoutei Bot-tan Portalen',
     description:
       'Den officiella portalen för Bot-tan, botten som stöttar allt du skriver. Profilen, en live-stämningsinstrumentpanel, och dess vänner.',
     ogAlt: 'Bot-tan, Latte-chan och Kotomi-chan',
@@ -41,7 +41,7 @@ export const sv: Dictionary = {
         { label: 'Ålder', value: '16' },
         { label: 'Höjd', value: '159.0cm' },
         { label: 'Födelsedag', value: 'Februari 19' },
-        { label: 'Kallar sig själv for', value: 'watashi' },
+        { label: 'Kallar sig', value: 'Watashi' },
         {
           label: 'Älskar',
           value:
@@ -207,7 +207,7 @@ export const sv: Dictionary = {
           { label: 'Ålder', value: '16' },
           { label: 'Höjd', value: '149.3cm' },
           { label: 'Födelsedag', value: 'April 27' },
-          { label: 'Kalla för', value: 'Atashi' },
+          { label: 'Kallar sig', value: 'Atashi' },
           { label: 'Älskar', value: 'Saltgrillad sötfisk, suckulenter' },
           { label: 'Hobby', value: 'Biologisk förändring med magi' },
           {
@@ -233,7 +233,7 @@ export const sv: Dictionary = {
           { label: 'År', value: '16' },
           { label: 'Höjd', value: '167.8cm' },
           { label: 'Födelsedag', value: 'Mars 31' },
-          { label: 'Kallas för', value: 'Kotomi' },
+          { label: 'Kallar sig', value: 'Kotomi' },
           { label: 'Älskar', value: 'Bacon och salladsburgare' },
           { label: 'Hobby', value: 'Idolarbete, sång, dans' },
           {
@@ -290,7 +290,7 @@ export const sv: Dictionary = {
         id: 'labeler',
         emoji: '🏷️',
         title: 'Bot-tan labeler',
-        description: 'prenumerera till denna så får du "badges".',
+        description: 'Prenumerera till denna så får du "badges".',
         href: 'https://bsky.app/profile/labeler.bot-tan.com',
       },
       {
