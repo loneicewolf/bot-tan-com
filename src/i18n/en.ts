@@ -41,7 +41,7 @@ export const en: Dictionary = {
         { label: 'Age', value: '16' },
         { label: 'Height', value: '159.0cm' },
         { label: 'Birthday', value: 'February 19' },
-        { label: 'Calls herself', value: 'watashi' },
+        { label: 'Calls herself', value: 'Watashi' },
         {
           label: 'Loves',
           value:
@@ -207,7 +207,7 @@ export const en: Dictionary = {
           { label: 'Age', value: '16' },
           { label: 'Height', value: '149.3cm' },
           { label: 'Birthday', value: 'April 27' },
-          { label: 'Calls herself', value: 'atashi' },
+          { label: 'Calls herself', value: 'Atashi' },
           { label: 'Loves', value: 'Salt-grilled sweetfish, succulents' },
           { label: 'Hobby', value: 'Transforming with magic' },
           {
