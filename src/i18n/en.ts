@@ -67,7 +67,7 @@ export const en: Dictionary = {
       { emoji: '🌅', text: 'Terrible at mornings. Morpho wakes her up by flopping on top of her every day.' },
       { emoji: '🚲', text: 'Loves slow rides on the GIANT cross bike a friend passed down to her.' },
       { emoji: '📷', text: 'Photo shooting blue skies on a SONY Alpha. Far too shy for selfies.' },
-      { emoji: '📖', text: 'Her dream is to write a book that makes peoples day on darker days and on already bright days.' },
+      { emoji: '📖', text: 'Her dream is to write a book that brightens peoples days.' },
     ],
     snsHeading: 'Go say hi',
   },
