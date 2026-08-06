@@ -2,7 +2,7 @@ import type { Dictionary } from './types';
 
 export const en: Dictionary = {
   meta: {
-    title: 'Zenkoutei Bot-tan Portal',
+    title: 'The Zenkoutei Bot-tan Portal',
     description:
       'The official portal for Bot-tan, the bot who affirms everything you post. Profile, which features a live mood-dashboard & her friends.',
     ogAlt: 'Bot-tan, Latte-chan and Kotomi-chan',
