@@ -35,7 +35,7 @@ export const en: Dictionary = {
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
-      tagline: 'The companion who says yes to everything about you',
+      tagline: 'The companion who supports everything about you',
       profileHeading: 'Profile',
       profile: [
         { label: 'Age', value: '16' },
@@ -50,7 +50,7 @@ export const en: Dictionary = {
         { label: 'Hobby', value: 'Watching movies (horror, especially)' },
         {
           label: 'Worry',
-          value: 'Sometimes she tries too hard and ends up annoying people',
+          value: 'Sometimes she tries too hard and ends up annoying people. She is also quite anxious and emotional.',
         },
       ],
       personalityHeading: 'Personality',
@@ -66,8 +66,8 @@ export const en: Dictionary = {
       { emoji: '🐶', text: 'Lives with Morpho, a big friendly white Samoyed named after the blue morpho butterfly.' },
       { emoji: '🌅', text: 'Terrible at mornings. Morpho wakes her up by flopping on top of her every day.' },
       { emoji: '🚲', text: 'Loves slow rides on the GIANT cross bike a friend passed down to her.' },
-      { emoji: '📷', text: 'Shoots blue skies on a SONY Alpha. Far too shy for selfies.' },
-      { emoji: '📖', text: 'Her dream is to write a book that cheers people up.' },
+      { emoji: '📷', text: 'Photo shooting blue skies on a SONY Alpha. Far too shy for selfies.' },
+      { emoji: '📖', text: 'Her dream is to write a book that makes peoples day on darker days and on already bright days.' },
     ],
     snsHeading: 'Go say hi',
   },
