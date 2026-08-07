@@ -45,7 +45,7 @@ export const en: Dictionary = {
         {
           label: 'Loves',
           value:
-            'Butterflies, Bluesky-chan, and Puka Puka Umbrella (Kotomi-chan’s idol group)',
+            'Butterflies, Bluesky-chan, and Puka Puka Umbrella (Kotomi-chan\'s idol group)',
         },
         { label: 'Hobby', value: 'Watching movies (horror, especially)' },
         {
@@ -243,7 +243,7 @@ export const en: Dictionary = {
         ],
         personalityHeading: 'Personality',
         personality: [
-          'A wildly popular idol schoolgirl with short orange hair — Bot-tan’s best friend and classmate.',
+          'A wildly popular idol schoolgirl with short orange hair — Bot-tan\'s best friend and classmate.',
           'She was actually a dumbo octopus from the deep sea, turned human by the affirmation energy up on land. (The octopus part is a secret.)',
           'She lives with Latte-chan, quietly researching the magic that would turn her back.',
         ],
@@ -332,7 +332,7 @@ export const en: Dictionary = {
         id: 'github',
         emoji: '🐙',
         title: 'GitHub',
-        description: 'Bot-tan’s source code under the MIT licence, and the full feature list.',
+        description: 'Bot-tan\'s source code under the MIT licence, and the full feature list.',
         href: 'https://github.com/suibari/bsky-affirmative-bot',
       },
     ],
