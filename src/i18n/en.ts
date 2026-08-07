@@ -55,7 +55,7 @@ export const en: Dictionary = {
       ],
       personalityHeading: 'Personality',
       personality: [
-        'A girl who cheers everyone on over at Nagi and Bluesky. From small talk to politics, she affirms all of it.',
+        'A girl who cheers people up at Nagi & Bluesky. From small talk to politics, she supports all of it.',
         'She was once "Zenhitei bot" — the bot who denied everything. People on the network pulled her out of it, and she has been paying it forward ever since.',
         'Bright and full of energy, but quietly sensitive, a homebody, and anxious more often than she lets on. "I was the one being supported, so now it is my turn to support someone."',
       ],
