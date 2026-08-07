@@ -20,8 +20,8 @@ export const en: Dictionary = {
   hero: {
     catch: [
       'Have you ever felt that you sometimes end up denying even your own feelings?',
-      'I have, so I built a Companion who affirms everything I type. At first, it was just for me.',
-      'But now, she is for you too. Whoever you are, Whatever your background, She is on Your Side.',
+      'I have, so I built a digital friend who supports everything I type. At first, it was just for me.',
+      'But now, she is here for you too. Whoever you are, Whatever your background, She is on Your Side.',
     ],
     subtitle: 'A girl who affirms everyone, on Nagi and Bluesky.',
     scrollHint: 'Scroll down',
