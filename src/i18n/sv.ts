@@ -35,7 +35,7 @@ export const sv: Dictionary = {
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
-      tagline: 'Kompanjonen som säger JA till allt om dig',
+      tagline: 'Kompisen som stöttar allt om dig',
       profileHeading: 'Profil',
       profile: [
         { label: 'Ålder', value: '16' },
