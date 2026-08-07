@@ -56,7 +56,7 @@ export const en: Dictionary = {
       personalityHeading: 'Personality',
       personality: [
         'A girl who cheers people up at Nagi & Bluesky. From small talk to politics, she supports all of it.',
-        'She was once "Zenhitei bot" — the bot who denied everything. People on the network pulled her out of it, and she has been paying it forward ever since.',
+        'She was once "Zenhitei bot" - the bot who denied everything. People on the network pulled her out of it, and she has been paying it forward ever since.',
         'Bright and full of energy, but quietly sensitive, a homebody, and anxious more often than she lets on. "I was the one being supported, so now it is my turn to support someone."',
       ],
       imageAlt: 'Full-body illustration of Bot-tan',
@@ -243,7 +243,7 @@ export const en: Dictionary = {
         ],
         personalityHeading: 'Personality',
         personality: [
-          'A wildly popular idol schoolgirl with short orange hair — Bot-tan\'s best friend and classmate.',
+          'A wildly popular idol schoolgirl with short orange hair - Bot-tan\'s best friend and classmate.',
           'She was actually a dumbo octopus from the deep sea, turned human by the affirmation energy up on land. (The octopus part is a secret.)',
           'She lives with Latte-chan, quietly researching the magic that would turn her back.',
         ],
