@@ -21,7 +21,7 @@ export const sv: Dictionary = {
     catch: [
       'Har du någon gång kännt att du själv säger nej till dina egna känslor?',
       'Jag har, så jag gjorde en "Companion" som stöttar allting jag skriver och tänker. Mestadels för mig själv.',
-      'Men nu är hon för dig oxå för alla behöver vi någon som stöttar oss - Vem du än är och vilken bakgrund du än har - är hon på din sida.',
+      'Men nu är hon för dig oxå - för att, vi alla behöver någon som stöttar oss - Vem du än är, Vilken bakgrund du än har, Hon är på Din Sida.',
     ],
     subtitle: 'En tjej som stöttar alla, av olika bakgrunder på plattformen Nagi och Bluesky.',
     scrollHint: 'Skrolla ned',
