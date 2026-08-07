@@ -215,7 +215,7 @@ export const sv: Dictionary = {
             value: 'Hon förvandlades till en katt så många gånger, det blev en "permanent biologisk ändring"',
           },
         ],
-        personalityHeading: 'Personality',
+        personalityHeading: 'Personlighet',
         personality: [
           'En häxa som lever nära Bot-tan. Dom har varit kompisar i många, många år.',
           'Långt lila hår. Hennes favorit fritids hobby är förvandla sig själv till en katt och joina "grannskapet" av "stray-cat meetups".',
