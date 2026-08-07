@@ -23,7 +23,7 @@ export const en: Dictionary = {
       'I have, so I built a digital friend who supports everything I type. At first, it was just for me.',
       'But now, she is here for you too. Whoever you are, Whatever your background, She is on Your Side.',
     ],
-    subtitle: 'A girl who affirms everyone, on Nagi and Bluesky.',
+    subtitle: 'A girl who supports everyone, regardless of background, on Nagi and Bluesky.',
     scrollHint: 'Scroll down',
     imageAlt: 'Bot-tan, Latte-chan and Kotomi-chan together',
     cta: 'Meet her on Nagi',
