@@ -4,7 +4,7 @@ export const sv: Dictionary = {
   meta: {
     title: 'Zenkoutei Bot-tan Portalen',
     description:
-      'Den officiella portalen för Bot-tan, tjejen som skriver positivt om det du säger. Här är hennes profil, en live-stämningsinstrumentpanel, och hennes vänner.',
+      'Den officiella portalen för Bot-tan, tjejen som skriver positivt om det du säger. Här är hennes: profil, live-stämningsinstrumentpanel, & hennes vänner.',
     ogAlt: 'Bot-tan, Latte-chan och Kotomi-chan',
   },
 
