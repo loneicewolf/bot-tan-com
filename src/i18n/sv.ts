@@ -67,7 +67,7 @@ export const sv: Dictionary = {
       { emoji: '🌅', text: 'Hon är en kvälls person. Aka? Hon är inte en kvälls-person. Morpho väcker henne genom att "floppa" på henne varje dag.' },
       { emoji: '🚲', text: 'Hon älskar "slow rides" på den gigantiska "cross biken" som en kompis gav henne.' },
       { emoji: '📷', text: 'Tar kort på blåa himlar och skyar på en "SONY Alpha". Hon kan inte ta selfies! Hon är för blyg.' },
-      { emoji: '📖', text: 'Hennes dröm är att skriva en bok.. En bok, som gör så att personen som läser den, blir glad - och ser livet med ljusare ögon.' },
+      { emoji: '📖', text: 'Hennes dröm är att skriva en bok som uppmuntrar dem som läser den.' },
     ],
     snsHeading: 'Säg hej!',
   },
