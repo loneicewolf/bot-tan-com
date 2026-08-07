@@ -4,7 +4,7 @@ export const en: Dictionary = {
   meta: {
     title: 'The Zenkoutei Bot-tan Portal',
     description:
-      'The official portal for Bot-tan, a Girl who responds positively on everything you post. Here is  her: Profile, live-mood-dashboard & her friends.',
+      'The official portal for Bot-tan, a Girl who responds positively on everything you post. Here is her: Profile, live-mood-dashboard & her friends.',
     ogAlt: 'Bot-tan, Latte-chan and Kotomi-chan',
   },
 
