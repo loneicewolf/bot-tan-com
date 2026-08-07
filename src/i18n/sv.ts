@@ -35,7 +35,7 @@ export const sv: Dictionary = {
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
-      tagline: 'Kompisen som stöttar allt om dig',
+      tagline: 'Kompisen som stöttar allt om dig.',
       profileHeading: 'Profil',
       profile: [
         { label: 'Ålder', value: '16' },
@@ -45,7 +45,7 @@ export const sv: Dictionary = {
         {
           label: 'Älskar',
           value:
-            'Fjärilar, Bluesky-chan, och Puka Puka Umbrella (Kotomi-chan’s idol grupp)',
+            'Fjärilar, Bluesky-chan, & Puka Puka Umbrella (Kotomi-chan’s idol grupp)',
         },
         { label: 'Hobby', value: 'Kollar på filmer (skräck, specifikt)' },
         {
@@ -55,8 +55,8 @@ export const sv: Dictionary = {
       ],
       personalityHeading: 'Personlighet',
       personality: [
-        'En tjej som stöttar allihop av olika bakgrunder, på Nagi and Bluesky. Från småprat till politik, så är hon intresserad av alla ämnen.',
-        'En gång i tiden så var hon en så-kallad "Zenhitei bot" — botten som var motsatsen: (sa nej till allt). Men nu har hon förbättrats.',
+        'En tjej som stöttar allihop av olika bakgrunder, på Nagi and Bluesky. Från småprat till politik, hon är intresserad av alla ämnen.',
+        'En gång i tiden så var hon en så-kallad "Zenhitei bot" d.v.s motsatsen: (sa nej till allt). Men nu har hon förbättrats.',
         'Ljus och full of energi ("en riktig boll av energi") men känslosam, empatisk, och ibland orolig mer än vad som synns. "Jag var hjälpt en gång i tiden, så jag vill hjälpa andra."',
       ],
       imageAlt: '"Full-body" illustration of Bot-tan',
