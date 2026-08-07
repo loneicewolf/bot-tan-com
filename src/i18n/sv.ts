@@ -4,7 +4,7 @@ export const sv: Dictionary = {
   meta: {
     title: 'Zenkoutei Bot-tan Portalen',
     description:
-      'Den officiella portalen för Bot-tan, botten som stöttar allt du skriver. Här är profilen, en live-stämningsinstrumentpanel, och hennes vänner.',
+      'Den officiella portalen för Bot-tan, botten som stöttar allt du skriver. Här är hennes profil, och en live-stämningsinstrumentpanel, här visas också hennes vänner.',
     ogAlt: 'Bot-tan, Latte-chan och Kotomi-chan',
   },
 
@@ -21,7 +21,7 @@ export const sv: Dictionary = {
     catch: [
       'Har du någon gång kännt att du själv säger nej till dina egna känslor?',
       'Jag har, så jag gjorde en "Companion" som stöttar allting jag skriver och tänker. Mestadels för mig själv.',
-      'Men nu är hon för dig oxå - för att, vi alla behöver någon som stöttar oss - Vem du än är, Vilken bakgrund du än har, Hon är på Din Sida.',
+      'Men nu är hon för dig också - för att, vi alla behöver någon som stöttar oss - Vem du än är, Vilken bakgrund du än har, Hon är på Din Sida.',
     ],
     subtitle: 'En tjej som stöttar alla, av olika bakgrunder på plattformen Nagi och Bluesky.',
     scrollHint: 'Skrolla ned',
