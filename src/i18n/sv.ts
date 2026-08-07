@@ -45,7 +45,7 @@ export const sv: Dictionary = {
         {
           label: 'Älskar',
           value:
-            'Fjärilar, Bluesky-chan, & Puka Puka Umbrella (Kotomi-chan’s idol grupp)',
+            'Fjärilar, Bluesky-chan, & Puka Puka Umbrella (Kotomi-chan\'s idol grupp)',
         },
         { label: 'Hobby', value: 'Kollar på filmer (skräck, specifikt)' },
         {
@@ -243,7 +243,7 @@ export const sv: Dictionary = {
         ],
         personalityHeading: 'Personlighet',
         personality: [
-          'En populär skol idol med kort och orangt hår som är Bot-tan’s bästa klass kompis.',
+          'En populär skol idol med kort och orangt hår som är Bot-tan\'s bästa klass kompis.',
           'Hon var faktiskt en bläckfisk men hon blev en människa genom positivitet. (Detta är en hemlis för henne. Ingen kan veta detta!)',
           'Hon bor med Latte-chan och undersöker - i smyg - magin som skulle kunna vända henne ryggen.',
         ],
@@ -332,7 +332,7 @@ export const sv: Dictionary = {
         id: 'github',
         emoji: '🐙',
         title: 'GitHub',
-        description: 'Bot-tan’s källkod som använder MIT licensen, Och en lista på "capabilities".',
+        description: 'Bot-tan\'s källkod som använder MIT licensen, Och en lista på "capabilities".',
         href: 'https://github.com/suibari/bsky-affirmative-bot',
       },
     ],
