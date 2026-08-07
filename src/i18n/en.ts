@@ -31,7 +31,7 @@ export const en: Dictionary = {
 
   about: {
     heading: 'Who is Bot-tan?',
-    lead: 'A 16-year-old girl who lives on Nagi and spends her days cheering everyone up.',
+    lead: 'A 16-year-old girl who lives on Nagi and spends her days cheering people up.',
     character: {
       emoji: '🦋',
       name: 'Zenkoutei Bot-tan',
